@@ -40,6 +40,8 @@ export async function fetchProductMeta(url, { discounts = [] } = {}) {
   if (match && retail != null) {
     sale = applyDiscount(retail, match.discount_pct)
     designer_discount_pct = Number(match.discount_pct)
+  } else if (match) {
+    designer_discount_pct = Number(match.discount_pct)
   }
 
   return {
@@ -50,5 +52,6 @@ export async function fetchProductMeta(url, { discounts = [] } = {}) {
     retail_price: retail,
     sale_price: sale,
     designer_discount_pct,
+    specs: payload.specs || '',
   }
 }

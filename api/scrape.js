@@ -42,43 +42,126 @@ function parseMeta(html, sourceUrl) {
   const images = collectImages(html, sourceUrl)
   const bestImage = pickBestImage(images)
 
+  const priceSources = []
   const price =
-    extractMetaPrice(html) ??
-    extractJsonLdPrice(html) ??
-    extractPriceFromText(description) ??
-    extractPriceFromText(title) ??
+    tryPrice(priceSources, 'json-ld', extractJsonLdPrice(html)) ??
+    tryPrice(priceSources, 'og:price:amount', metaPrice(html)) ??
+    tryPrice(priceSources, 'css', extractCssPrice(html)) ??
+    tryPrice(priceSources, 'meta-description', extractPriceFromText(description)) ??
+    tryPrice(priceSources, 'title', extractPriceFromText(title)) ??
     null
+
+  const specs = extractSpecs(html, description)
+
+  console.log('[scraper]', {
+    url: sourceUrl,
+    name: title.slice(0, 60),
+    price,
+    priceSources,
+    imageCount: images.length,
+    chosenImage: bestImage ? bestImage.slice(0, 80) : null,
+    specs: specs ? specs.slice(0, 80) : null,
+  })
 
   return {
     name: cleanTitle(title),
     vendor: siteName || hostnamePretty(sourceUrl),
     image_url: bestImage || '',
-    image_candidates: images.slice(0, 6),
+    image_candidates: images.slice(0, 10),
     product_url: absoluteUrl(ogUrl, sourceUrl) || sourceUrl,
     retail_price: price,
+    specs,
   }
 }
 
+function tryPrice(log, source, value) {
+  if (value != null) {
+    log.push({ source, value })
+    return value
+  }
+  return null
+}
+
 function collectImages(html, sourceUrl) {
-  const names = ['og:image', 'og:image:secure_url', 'twitter:image', 'twitter:image:src']
-  const set = new Set()
-  for (const n of names) {
-    for (const u of metaTagAll(html, n)) {
-      const abs = absoluteUrl(u, sourceUrl)
-      if (abs) set.add(abs)
+  const out = []
+  const seen = new Set()
+
+  function add(url) {
+    if (!url) return
+    const abs = absoluteUrl(url, sourceUrl)
+    if (!abs) return
+    if (seen.has(abs)) return
+    if (abs.startsWith('data:')) return
+    if (/\b(logo|icon|spinner|placeholder|blank|sprite|favicon)\b/i.test(abs)) return
+    seen.add(abs)
+    out.push(abs)
+  }
+
+  for (const n of ['og:image', 'og:image:secure_url', 'twitter:image', 'twitter:image:src']) {
+    metaTagAll(html, n).forEach(add)
+  }
+
+  collectJsonLdImages(html).forEach(add)
+  collectImgTagSrcs(html).forEach(add)
+
+  return out
+}
+
+function collectJsonLdImages(html) {
+  const out = []
+  const re = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+  let m
+  while ((m = re.exec(html)) !== null) {
+    try {
+      walkImages(JSON.parse(m[1].trim()), out)
+    } catch {
+      // ignore malformed json-ld
     }
   }
-  return [...set]
+  return out
+}
+
+function walkImages(obj, out) {
+  if (!obj || typeof obj !== 'object') return
+  if (Array.isArray(obj)) {
+    obj.forEach((v) => walkImages(v, out))
+    return
+  }
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === 'image') {
+      if (typeof v === 'string') out.push(v)
+      else if (Array.isArray(v)) {
+        v.forEach((img) => {
+          if (typeof img === 'string') out.push(img)
+          else if (img?.url) out.push(img.url)
+        })
+      } else if (v?.url) out.push(v.url)
+    } else if (typeof v === 'object') {
+      walkImages(v, out)
+    }
+  }
+}
+
+function collectImgTagSrcs(html) {
+  const out = []
+  const re = /<img\b[^>]*\b(?:src|data-src|data-zoom-image)\s*=\s*["']([^"']+)["'][^>]*>/gi
+  let m
+  let cap = 0
+  while ((m = re.exec(html)) !== null && cap < 40) {
+    out.push(m[1])
+    cap++
+  }
+  return out
 }
 
 function pickBestImage(images) {
   if (!images.length) return ''
-  const keywords = /white|clean|studio|flat/i
-  const scored = images.map((url, i) => ({
-    url,
-    score: keywords.test(url) ? 10 : 0,
-    order: i,
-  }))
+  const scored = images.map((url, i) => {
+    let score = 0
+    if (/white|clean|studio|flat/i.test(url)) score += 10
+    if (/[-_]1\.(jpe?g|png|webp)/i.test(url)) score += 8
+    return { url, score, order: i }
+  })
   scored.sort((a, b) => b.score - a.score || a.order - b.order)
   return scored[0].url
 }
@@ -165,7 +248,7 @@ function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function extractMetaPrice(html) {
+function metaPrice(html) {
   for (const t of ['product:price:amount', 'og:price:amount', 'twitter:data1']) {
     const n = parsePriceString(metaTag(html, t))
     if (n != null) return n
@@ -197,7 +280,7 @@ function findPriceDeep(obj) {
     return null
   }
   for (const [k, v] of Object.entries(obj)) {
-    if (/^price$/i.test(k)) {
+    if (/^(price|highPrice|lowPrice)$/i.test(k)) {
       const n = parsePriceString(v)
       if (n != null) return n
     }
@@ -205,6 +288,24 @@ function findPriceDeep(obj) {
       const n = findPriceDeep(v)
       if (n != null) return n
     }
+  }
+  return null
+}
+
+function extractCssPrice(html) {
+  const patterns = [
+    /<[^>]+\bdata-price\s*=\s*["']\$?\s*([0-9][\d,]*(?:\.\d{2})?)["']/i,
+    /<[^>]+\bitemprop\s*=\s*["']price["'][^>]*\bcontent\s*=\s*["']\$?\s*([0-9][\d,]*(?:\.\d{2})?)["']/i,
+    /<[^>]+\bcontent\s*=\s*["']\$?\s*([0-9][\d,]*(?:\.\d{2})?)["'][^>]*\bitemprop\s*=\s*["']price["']/i,
+    /<[^>]+\bitemprop\s*=\s*["']price["'][^>]*>\s*\$?\s*([0-9][\d,]*(?:\.\d{2})?)/i,
+    /<[^>]+\bclass\s*=\s*["'][^"']*\bregular-price\b[^"']*["'][^>]*>\s*\$?\s*([0-9][\d,]*(?:\.\d{2})?)/i,
+    /<[^>]+\bclass\s*=\s*["'][^"']*\bproduct-price\b[^"']*["'][^>]*>\s*\$?\s*([0-9][\d,]*(?:\.\d{2})?)/i,
+    /<[^>]+\bclass\s*=\s*["'][^"']*(?:^|\s)price(?:\s|$)[^"']*["'][^>]*>\s*\$?\s*([0-9][\d,]*(?:\.\d{2})?)/i,
+  ]
+  for (const re of patterns) {
+    const m = html.match(re)
+    const n = parsePriceString(m?.[1])
+    if (n != null && n > 0) return n
   }
   return null
 }
@@ -217,6 +318,52 @@ function extractPriceFromText(text) {
 
 function parsePriceString(v) {
   if (v == null) return null
-  const n = Number(String(v).replace(/[$,]/g, '').trim())
+  const n = Number(String(v).replace(/[$,\s]/g, ''))
   return Number.isFinite(n) && n > 0 ? n : null
+}
+
+function extractSpecs(html, fallbackDescription) {
+  // Prefer JSON-LD product description (often more structured)
+  const re = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+  let m
+  while ((m = re.exec(html)) !== null) {
+    try {
+      const d = findStringDeep(JSON.parse(m[1].trim()), 'description')
+      if (d) return trimSpec(d)
+    } catch {
+      // skip malformed json-ld
+    }
+  }
+  if (fallbackDescription) return trimSpec(fallbackDescription)
+  return ''
+}
+
+function findStringDeep(obj, key) {
+  if (!obj || typeof obj !== 'object') return null
+  if (Array.isArray(obj)) {
+    for (const item of obj) {
+      const v = findStringDeep(item, key)
+      if (v) return v
+    }
+    return null
+  }
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === key && typeof v === 'string' && v.trim()) return v
+    if (typeof v === 'object') {
+      const r = findStringDeep(v, key)
+      if (r) return r
+    }
+  }
+  return null
+}
+
+function trimSpec(text) {
+  const cleaned = String(text)
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (cleaned.length <= 240) return cleaned
+  const cut = cleaned.slice(0, 240)
+  const lastDot = cut.lastIndexOf('. ')
+  return (lastDot > 100 ? cut.slice(0, lastDot + 1) : cut) + '…'
 }

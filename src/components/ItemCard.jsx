@@ -56,20 +56,21 @@ export default function ItemCard({
                 className="block font-serif text-2xl tracking-tight text-foreground w-full"
                 inputClassName="font-serif text-2xl"
               />
-              <div className="mt-1 flex items-baseline gap-3 text-muted-foreground">
-                <InlineEdit
-                  value={item.vendor}
-                  onSave={(v) => onUpdate({ vendor: v })}
-                  placeholder="Add vendor"
-                  emptyLabel="Add vendor"
-                  className="font-serif italic"
-                />
-                {discount != null && (
-                  <span className="text-xs uppercase tracking-[0.18em]">
-                    Designer discount {Number(discount)}%
-                  </span>
-                )}
-              </div>
+              <InlineEdit
+                value={item.vendor}
+                onSave={(v) => onUpdate({ vendor: v })}
+                placeholder="Add vendor"
+                emptyLabel="Add vendor"
+                className="mt-1 block font-serif italic text-muted-foreground"
+              />
+              <InlineEdit
+                value={item.specs}
+                onSave={(v) => onUpdate({ specs: v })}
+                placeholder="Add specs (fabric, dimensions, finish…)"
+                emptyLabel="Add specs"
+                className="mt-1 block text-xs text-muted-foreground"
+                multiline
+              />
             </div>
             <div className="flex flex-none items-center gap-1 text-muted-foreground">
               <span
@@ -142,6 +143,11 @@ export default function ItemCard({
                 className="tabular-nums"
                 inputClassName="tabular-nums"
               />
+              {discount != null && discount > 0 && (
+                <p className="mt-1 text-[10px] italic text-muted-foreground">
+                  Designer discount {Number(discount)}%
+                </p>
+              )}
             </Cell>
             <Cell label="Final">
               <InlineFinalEdit

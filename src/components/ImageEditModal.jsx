@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import Modal from './Modal'
 import Button from './Button'
-import Field from './Field'
 
 export default function ImageEditModal({ open, currentUrl = '', onClose, onSave }) {
-  const [url, setUrl] = useState('')
   const [preview, setPreview] = useState('')
+  const [dataUrl, setDataUrl] = useState('')
   const [processing, setProcessing] = useState(false)
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef(null)
 
   useEffect(() => {
     if (open) {
-      setUrl(currentUrl || '')
       setPreview(currentUrl || '')
+      setDataUrl('')
       setProcessing(false)
       setDragging(false)
     }
@@ -42,9 +41,9 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
   async function processFile(file) {
     setProcessing(true)
     try {
-      const dataUrl = await resizeImage(file, 800, 0.85)
-      setPreview(dataUrl)
-      setUrl(dataUrl)
+      const out = await resizeImage(file, 800, 0.85)
+      setPreview(out)
+      setDataUrl(out)
     } catch (err) {
       alert('Could not read that image: ' + err.message)
     } finally {
@@ -61,18 +60,11 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
     e.preventDefault()
     setDragging(false)
     const file = e.dataTransfer?.files?.[0]
-    if (file && file.type.startsWith('image/')) {
-      processFile(file)
-    }
-  }
-
-  function handleUrlChange(v) {
-    setUrl(v)
-    setPreview(v)
+    if (file && file.type.startsWith('image/')) processFile(file)
   }
 
   function handleSave() {
-    onSave(url.trim() || null)
+    if (dataUrl) onSave(dataUrl)
     onClose()
   }
 
@@ -86,7 +78,7 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={processing}>
+          <Button onClick={handleSave} disabled={processing || !dataUrl}>
             Save
           </Button>
         </>
@@ -101,16 +93,16 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors ${
             dragging
               ? 'border-clay bg-clay/5 text-foreground'
               : 'border-border bg-muted/40 text-muted-foreground hover:border-foreground/40 hover:text-foreground'
           }`}
         >
-          <p className="font-serif text-xl tracking-tight text-foreground">
+          <p className="font-serif text-2xl tracking-tight text-foreground">
             Drop an image here
           </p>
-          <p className="mt-1 text-sm">
+          <p className="mt-2 text-sm">
             paste a screenshot (⌘V), or click to choose a file
           </p>
           {processing && (
@@ -124,22 +116,6 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
             className="hidden"
           />
         </div>
-
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border" />
-          <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            or
-          </span>
-          <div className="h-px flex-1 bg-border" />
-        </div>
-
-        <Field
-          label="Image URL"
-          type="url"
-          value={url.startsWith('data:') ? '' : url}
-          onChange={handleUrlChange}
-          placeholder="https://"
-        />
 
         <div>
           <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -157,6 +133,9 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
               <span className="text-sm text-muted-foreground">No image yet</span>
             )}
           </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Images are resized to 800px wide and stored as JPEG to keep the database fast.
+          </p>
         </div>
       </div>
     </Modal>

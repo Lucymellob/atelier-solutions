@@ -6,6 +6,7 @@ const empty = {
   name: '',
   image_url: '',
   vendor: '',
+  specs: '',
   retail_price: '',
   sale_price: '',
   quantity: 1,
@@ -47,6 +48,7 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
       name: values.name.trim(),
       image_url: values.image_url?.trim() || null,
       vendor: values.vendor?.trim() || null,
+      specs: values.specs?.trim() || null,
       retail_price: numOrNull(values.retail_price),
       sale_price: numOrNull(values.sale_price),
       quantity: Number(values.quantity) || 1,
@@ -59,8 +61,8 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
   }
 
   const hostname = prettyHostname(values.product_url)
-  const showDiscountHint =
-    values.designer_discount_pct != null && Number(values.designer_discount_pct) > 0
+  const discountPct =
+    values.designer_discount_pct != null ? Number(values.designer_discount_pct) : null
 
   return (
     <form
@@ -84,7 +86,7 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
             />
           ) : null}
         </div>
-        <div className="flex-1">
+        <div className="flex-1 space-y-4">
           <Field
             label="Item name"
             value={values.name}
@@ -92,24 +94,22 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
             placeholder="Linen sofa, brass sconce…"
             required
           />
+          <Field
+            label="Vendor"
+            value={values.vendor}
+            onChange={(v) => set('vendor', v)}
+            placeholder="West Elm, CB2…"
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Field
-          label="Vendor"
-          value={values.vendor}
-          onChange={(v) => set('vendor', v)}
-          placeholder="West Elm, CB2…"
-        />
-        <Field
-          label="Image URL"
-          type="url"
-          value={values.image_url}
-          onChange={(v) => set('image_url', v)}
-          placeholder="https://"
-        />
-      </div>
+      <Field
+        label="Specs"
+        value={values.specs}
+        onChange={(v) => set('specs', v)}
+        placeholder="Fabric, dimensions, finish…"
+        hint="Scraped from the page when available — editable anytime."
+      />
 
       <div className="grid grid-cols-3 gap-4">
         <Field
@@ -125,18 +125,20 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
           value={values.retail_price}
           onChange={setRetail}
         />
-        <Field
-          label="Sale $"
-          type="number"
-          step="0.01"
-          value={values.sale_price}
-          onChange={(v) => set('sale_price', v)}
-          hint={
-            showDiscountHint
-              ? `Designer discount ${Number(values.designer_discount_pct)}% auto-applies when retail is set`
-              : undefined
-          }
-        />
+        <div>
+          <Field
+            label="Sale $"
+            type="number"
+            step="0.01"
+            value={values.sale_price}
+            onChange={(v) => set('sale_price', v)}
+          />
+          {discountPct != null && discountPct > 0 && (
+            <p className="mt-1 text-[10px] italic text-muted-foreground">
+              Designer discount {discountPct}%
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center justify-between pt-2">
