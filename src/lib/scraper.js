@@ -1,5 +1,3 @@
-const ENDPOINT = 'https://api.microlink.io/'
-
 export async function fetchProductMeta(url) {
   if (!url || !/^https?:\/\//i.test(url)) {
     throw new Error('Please paste a full link starting with http:// or https://')
@@ -7,47 +5,36 @@ export async function fetchProductMeta(url) {
 
   let res
   try {
-    res = await fetch(`${ENDPOINT}?url=${encodeURIComponent(url)}`)
+    res = await fetch('/api/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    })
   } catch {
-    throw new Error('Could not reach the link. Check your internet connection.')
+    throw new Error('Could not reach the scraper. Check your internet connection.')
   }
 
-  if (!res.ok) {
-    throw new Error(`Could not read that page (HTTP ${res.status}).`)
+  if (res.status === 404) {
+    throw new Error(
+      'The scraper backend is not available here (it only runs on the live site). Please use the live URL.',
+    )
   }
 
   const payload = await res.json().catch(() => null)
-  if (!payload || payload.status !== 'success' || !payload.data) {
+
+  if (!res.ok) {
+    throw new Error(payload?.error || `Could not read that page (HTTP ${res.status}).`)
+  }
+
+  if (!payload || (!payload.name && !payload.image_url)) {
     throw new Error('That page did not return product details.')
   }
 
-  const data = payload.data
   return {
-    name: cleanTitle(data.title) || '',
-    vendor: data.publisher || hostname(url) || '',
-    image_url: data.image?.url || data.logo?.url || '',
-    product_url: data.url || url,
-    retail_price: extractPrice(data.description) ?? extractPrice(data.title) ?? null,
+    name: payload.name || '',
+    vendor: payload.vendor || '',
+    image_url: payload.image_url || '',
+    product_url: payload.product_url || url,
+    retail_price: payload.retail_price ?? null,
   }
-}
-
-function cleanTitle(t) {
-  if (!t) return ''
-  return String(t).split(/\s+[|–—-]\s+/)[0].trim()
-}
-
-function hostname(url) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '')
-  } catch {
-    return ''
-  }
-}
-
-function extractPrice(text) {
-  if (!text) return null
-  const match = String(text).match(/\$\s?([\d,]+(?:\.\d{2})?)/)
-  if (!match) return null
-  const n = Number(match[1].replace(/,/g, ''))
-  return Number.isFinite(n) ? n : null
 }
