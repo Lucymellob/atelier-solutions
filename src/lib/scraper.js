@@ -1,4 +1,6 @@
-export async function fetchProductMeta(url) {
+import { matchDiscount, applyDiscount, hostnameOf } from './discounts'
+
+export async function fetchProductMeta(url, { discounts = [] } = {}) {
   if (!url || !/^https?:\/\//i.test(url)) {
     throw new Error('Please paste a full link starting with http:// or https://')
   }
@@ -16,7 +18,7 @@ export async function fetchProductMeta(url) {
 
   if (res.status === 404) {
     throw new Error(
-      'The scraper backend is not available here (it only runs on the live site). Please use the live URL.',
+      'Scraper not available here (only runs on the live site). Please use the deployed URL.',
     )
   }
 
@@ -30,11 +32,23 @@ export async function fetchProductMeta(url) {
     throw new Error('That page did not return product details.')
   }
 
+  const match = matchDiscount(url, discounts)
+  const retail = payload.retail_price ?? null
+  let sale = null
+  let designer_discount_pct = null
+
+  if (match && retail != null) {
+    sale = applyDiscount(retail, match.discount_pct)
+    designer_discount_pct = Number(match.discount_pct)
+  }
+
   return {
     name: payload.name || '',
-    vendor: payload.vendor || '',
+    vendor: match?.name || payload.vendor || hostnameOf(url),
     image_url: payload.image_url || '',
     product_url: payload.product_url || url,
-    retail_price: payload.retail_price ?? null,
+    retail_price: retail,
+    sale_price: sale,
+    designer_discount_pct,
   }
 }

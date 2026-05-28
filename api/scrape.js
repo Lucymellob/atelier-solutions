@@ -15,16 +15,13 @@ export default async function handler(req, res) {
   let html
   try {
     const r = await fetch(scraperUrl)
-    if (!r.ok) {
-      return res.status(502).json({ error: `Scraper returned ${r.status}` })
-    }
+    if (!r.ok) return res.status(502).json({ error: `Scraper returned ${r.status}` })
     html = await r.text()
-  } catch (err) {
+  } catch {
     return res.status(502).json({ error: 'Could not reach the page.' })
   }
 
-  const meta = parseMeta(html, url)
-  return res.status(200).json(meta)
+  return res.status(200).json(parseMeta(html, url))
 }
 
 function parseMeta(html, sourceUrl) {
@@ -34,20 +31,16 @@ function parseMeta(html, sourceUrl) {
     htmlTitle(html) ||
     ''
 
-  const image =
-    metaTag(html, 'og:image') ||
-    metaTag(html, 'twitter:image') ||
-    metaTag(html, 'twitter:image:src') ||
-    ''
-
   const description =
     metaTag(html, 'og:description') ||
     metaTag(html, 'description') ||
     ''
 
   const siteName = metaTag(html, 'og:site_name') || ''
-
   const ogUrl = metaTag(html, 'og:url') || sourceUrl
+
+  const images = collectImages(html, sourceUrl)
+  const bestImage = pickBestImage(images)
 
   const price =
     extractMetaPrice(html) ??
@@ -59,30 +52,74 @@ function parseMeta(html, sourceUrl) {
   return {
     name: cleanTitle(title),
     vendor: siteName || hostnamePretty(sourceUrl),
-    image_url: absoluteUrl(image, sourceUrl) || '',
+    image_url: bestImage || '',
+    image_candidates: images.slice(0, 6),
     product_url: absoluteUrl(ogUrl, sourceUrl) || sourceUrl,
     retail_price: price,
   }
 }
 
+function collectImages(html, sourceUrl) {
+  const names = ['og:image', 'og:image:secure_url', 'twitter:image', 'twitter:image:src']
+  const set = new Set()
+  for (const n of names) {
+    for (const u of metaTagAll(html, n)) {
+      const abs = absoluteUrl(u, sourceUrl)
+      if (abs) set.add(abs)
+    }
+  }
+  return [...set]
+}
+
+function pickBestImage(images) {
+  if (!images.length) return ''
+  const keywords = /white|clean|studio|flat/i
+  const scored = images.map((url, i) => ({
+    url,
+    score: keywords.test(url) ? 10 : 0,
+    order: i,
+  }))
+  scored.sort((a, b) => b.score - a.score || a.order - b.order)
+  return scored[0].url
+}
+
 function metaTag(html, name) {
-  const variants = [name]
-  if (name.startsWith('og:') || name.startsWith('twitter:') || name.startsWith('product:')) {
-    variants.push(name)
+  const re1 = new RegExp(
+    `<meta[^>]+(?:property|name)=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
+    'i',
+  )
+  const re2 = new RegExp(
+    `<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']${escapeRegex(name)}["']`,
+    'i',
+  )
+  const m = html.match(re1) || html.match(re2)
+  return m ? decodeEntities(m[1]) : null
+}
+
+function metaTagAll(html, name) {
+  const out = []
+  const seen = new Set()
+  const patterns = [
+    new RegExp(
+      `<meta[^>]+(?:property|name)=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
+      'gi',
+    ),
+    new RegExp(
+      `<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']${escapeRegex(name)}["']`,
+      'gi',
+    ),
+  ]
+  for (const re of patterns) {
+    let m
+    while ((m = re.exec(html)) !== null) {
+      const v = decodeEntities(m[1])
+      if (!seen.has(v)) {
+        seen.add(v)
+        out.push(v)
+      }
+    }
   }
-  for (const n of variants) {
-    const re1 = new RegExp(
-      `<meta[^>]+(?:property|name)=["']${escapeRegex(n)}["'][^>]*content=["']([^"']+)["']`,
-      'i',
-    )
-    const re2 = new RegExp(
-      `<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']${escapeRegex(n)}["']`,
-      'i',
-    )
-    const m = html.match(re1) || html.match(re2)
-    if (m) return decodeEntities(m[1])
-  }
-  return null
+  return out
 }
 
 function htmlTitle(html) {
@@ -129,14 +166,8 @@ function escapeRegex(s) {
 }
 
 function extractMetaPrice(html) {
-  const tags = [
-    'product:price:amount',
-    'og:price:amount',
-    'twitter:data1',
-  ]
-  for (const t of tags) {
-    const v = metaTag(html, t)
-    const n = parsePriceString(v)
+  for (const t of ['product:price:amount', 'og:price:amount', 'twitter:data1']) {
+    const n = parsePriceString(metaTag(html, t))
     if (n != null) return n
   }
   return null
@@ -147,9 +178,8 @@ function extractJsonLdPrice(html) {
   let m
   while ((m = re.exec(html)) !== null) {
     try {
-      const data = JSON.parse(m[1].trim())
-      const price = findPriceDeep(data)
-      if (price != null) return price
+      const v = findPriceDeep(JSON.parse(m[1].trim()))
+      if (v != null) return v
     } catch {
       // skip malformed JSON-LD
     }
@@ -167,7 +197,7 @@ function findPriceDeep(obj) {
     return null
   }
   for (const [k, v] of Object.entries(obj)) {
-    if (/^price$/i.test(k) && (typeof v === 'number' || typeof v === 'string')) {
+    if (/^price$/i.test(k)) {
       const n = parsePriceString(v)
       if (n != null) return n
     }
@@ -182,8 +212,7 @@ function findPriceDeep(obj) {
 function extractPriceFromText(text) {
   if (!text) return null
   const m = String(text).match(/\$\s?([\d,]+(?:\.\d{2})?)/)
-  if (!m) return null
-  return parsePriceString(m[1])
+  return m ? parsePriceString(m[1]) : null
 }
 
 function parsePriceString(v) {

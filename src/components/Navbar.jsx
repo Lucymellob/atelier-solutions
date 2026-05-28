@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 export default function Navbar() {
   return (
@@ -12,9 +12,25 @@ export default function Navbar() {
             Sourcing &amp; Budget
           </span>
         </Link>
-        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-          Workspace
-        </p>
+        <nav className="flex items-center gap-6 text-xs uppercase tracking-[0.22em]">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+            }
+          >
+            Projects
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+            }
+          >
+            Settings
+          </NavLink>
+        </nav>
       </div>
     </header>
   )

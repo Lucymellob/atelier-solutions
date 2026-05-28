@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Sparkle } from './Icons'
 import { fetchProductMeta } from '../lib/scraper'
+import { useDiscounts } from '../hooks/useDiscounts'
 
 export default function PasteLinkCard({ onFetched, onManualWithUrl, onManual }) {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [notice, setNotice] = useState(null)
+  const { discounts } = useDiscounts()
 
   async function handleFetch(e) {
     e?.preventDefault()
@@ -14,7 +16,7 @@ export default function PasteLinkCard({ onFetched, onManualWithUrl, onManual }) 
     setLoading(true)
     setNotice(null)
     try {
-      const meta = await fetchProductMeta(trimmed)
+      const meta = await fetchProductMeta(trimmed, { discounts })
       setUrl('')
       onFetched?.(meta)
     } catch (err) {
