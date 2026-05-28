@@ -4,29 +4,42 @@ import Button from './Button'
 import Field from './Field'
 
 export default function ImageEditModal({ open, currentUrl = '', onClose, onSave }) {
-  const [mode, setMode] = useState('url')
   const [url, setUrl] = useState('')
   const [preview, setPreview] = useState('')
   const [processing, setProcessing] = useState(false)
+  const [dragging, setDragging] = useState(false)
   const fileRef = useRef(null)
 
   useEffect(() => {
     if (open) {
-      setMode('url')
       setUrl(currentUrl || '')
       setPreview(currentUrl || '')
       setProcessing(false)
+      setDragging(false)
     }
   }, [open, currentUrl])
 
-  function handleUrlChange(v) {
-    setUrl(v)
-    setPreview(v)
-  }
+  useEffect(() => {
+    if (!open) return
+    function onPaste(e) {
+      const items = e.clipboardData?.items
+      if (!items) return
+      for (const item of items) {
+        if (item.kind === 'file' && item.type.startsWith('image/')) {
+          const file = item.getAsFile()
+          if (file) {
+            e.preventDefault()
+            processFile(file)
+            return
+          }
+        }
+      }
+    }
+    window.addEventListener('paste', onPaste)
+    return () => window.removeEventListener('paste', onPaste)
+  }, [open])
 
-  async function handleFile(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
+  async function processFile(file) {
     setProcessing(true)
     try {
       const dataUrl = await resizeImage(file, 800, 0.85)
@@ -37,6 +50,25 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
     } finally {
       setProcessing(false)
     }
+  }
+
+  function handleFile(e) {
+    const file = e.target.files?.[0]
+    if (file) processFile(file)
+  }
+
+  function handleDrop(e) {
+    e.preventDefault()
+    setDragging(false)
+    const file = e.dataTransfer?.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      processFile(file)
+    }
+  }
+
+  function handleUrlChange(v) {
+    setUrl(v)
+    setPreview(v)
   }
 
   function handleSave() {
@@ -61,43 +93,53 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
       }
     >
       <div className="space-y-5">
-        <div className="flex gap-2 border-b border-border">
-          <TabBtn active={mode === 'url'} onClick={() => setMode('url')}>
-            Paste URL
-          </TabBtn>
-          <TabBtn active={mode === 'upload'} onClick={() => setMode('upload')}>
-            Upload from computer
-          </TabBtn>
+        <div
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragging(true)
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={handleDrop}
+          onClick={() => fileRef.current?.click()}
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
+            dragging
+              ? 'border-clay bg-clay/5 text-foreground'
+              : 'border-border bg-muted/40 text-muted-foreground hover:border-foreground/40 hover:text-foreground'
+          }`}
+        >
+          <p className="font-serif text-xl tracking-tight text-foreground">
+            Drop an image here
+          </p>
+          <p className="mt-1 text-sm">
+            paste a screenshot (⌘V), or click to choose a file
+          </p>
+          {processing && (
+            <p className="mt-3 text-xs italic text-muted-foreground">Processing…</p>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFile}
+            className="hidden"
+          />
         </div>
 
-        {mode === 'url' ? (
-          <Field
-            label="Image URL"
-            type="url"
-            value={url.startsWith('data:') ? '' : url}
-            onChange={handleUrlChange}
-            placeholder="https://..."
-          />
-        ) : (
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              Pick an image
-            </p>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFile}
-              className="block w-full text-sm text-foreground file:mr-3 file:rounded-full file:border-0 file:bg-foreground file:px-4 file:py-2 file:text-sm file:font-medium file:text-background hover:file:bg-foreground/85"
-            />
-            {processing && (
-              <p className="text-xs text-muted-foreground">Processing image…</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Resized to 800px wide to keep the database fast.
-            </p>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            or
+          </span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <Field
+          label="Image URL"
+          type="url"
+          value={url.startsWith('data:') ? '' : url}
+          onChange={handleUrlChange}
+          placeholder="https://"
+        />
 
         <div>
           <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -118,22 +160,6 @@ export default function ImageEditModal({ open, currentUrl = '', onClose, onSave 
         </div>
       </div>
     </Modal>
-  )
-}
-
-function TabBtn({ active, onClick, children }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`-mb-px border-b-2 px-3 py-2 text-sm transition-colors ${
-        active
-          ? 'border-foreground text-foreground'
-          : 'border-transparent text-muted-foreground hover:text-foreground'
-      }`}
-    >
-      {children}
-    </button>
   )
 }
 
