@@ -24,10 +24,9 @@ export default function RoomSection({ room, items = [] }) {
 
   const roomTotal = totals(items).sale
 
-  async function handleFetched(meta) {
-    await createItem({ ...meta, room_id: room.id })
-    setMode('idle')
-    setPrefill(null)
+  function handleFetched(meta) {
+    setPrefill(meta)
+    setMode('manual')
   }
 
   function handleManualWithUrl(url) {

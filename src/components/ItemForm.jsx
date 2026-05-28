@@ -10,13 +10,35 @@ const empty = {
   sale_price: '',
   quantity: 1,
   product_url: '',
+  final_price: '',
+  include_in_budget: true,
+  designer_discount_pct: null,
 }
 
-export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add item' }) {
+export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add to project' }) {
   const [values, setValues] = useState({ ...empty, ...(initial || {}) })
 
   function set(key, val) {
     setValues((v) => ({ ...v, [key]: val }))
+  }
+
+  function setRetail(v) {
+    setValues((cur) => {
+      const next = { ...cur, retail_price: v }
+      const pct = Number(cur.designer_discount_pct)
+      const retail = Number(v)
+      const saleEmpty = cur.sale_price === '' || cur.sale_price == null
+      if (
+        saleEmpty &&
+        Number.isFinite(pct) &&
+        pct > 0 &&
+        Number.isFinite(retail) &&
+        retail > 0
+      ) {
+        next.sale_price = Math.round(retail * (1 - pct / 100) * 100) / 100
+      }
+      return next
+    })
   }
 
   function handleSubmit(e) {
@@ -31,8 +53,14 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
       product_url: values.product_url?.trim() || null,
       final_price: numOrNull(values.final_price),
       include_in_budget: values.include_in_budget !== false,
+      designer_discount_pct:
+        values.designer_discount_pct != null ? Number(values.designer_discount_pct) : null,
     })
   }
+
+  const hostname = prettyHostname(values.product_url)
+  const showDiscountHint =
+    values.designer_discount_pct != null && Number(values.designer_discount_pct) > 0
 
   return (
     <form
@@ -40,75 +68,110 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
       className="space-y-5 rounded-2xl border border-foreground/20 bg-card p-6"
     >
       <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
-        {initial ? 'Edit item' : 'Enter manually'}
+        {initial?.name ? 'Review and add' : 'Enter manually'}
       </p>
 
-      <Field
-        label="Name"
-        value={values.name}
-        onChange={(v) => set('name', v)}
-        placeholder="Linen sofa, brass sconce…"
-        required
-      />
+      <div className="flex gap-5">
+        <div className="h-28 w-28 flex-none overflow-hidden rounded-xl bg-muted">
+          {values.image_url ? (
+            <img
+              src={values.image_url}
+              alt=""
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+          ) : null}
+        </div>
+        <div className="flex-1">
+          <Field
+            label="Item name"
+            value={values.name}
+            onChange={(v) => set('name', v)}
+            placeholder="Linen sofa, brass sconce…"
+            required
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <Field
           label="Vendor"
           value={values.vendor}
           onChange={(v) => set('vendor', v)}
-          placeholder="RH, CB2, etc."
+          placeholder="West Elm, CB2…"
         />
+        <Field
+          label="Image URL"
+          type="url"
+          value={values.image_url}
+          onChange={(v) => set('image_url', v)}
+          placeholder="https://"
+        />
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
         <Field
           label="Quantity"
           type="number"
           value={values.quantity}
           onChange={(v) => set('quantity', v)}
         />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
         <Field
-          label="Retail price"
+          label="Retail $"
           type="number"
           step="0.01"
           value={values.retail_price}
-          onChange={(v) => set('retail_price', v)}
+          onChange={setRetail}
         />
         <Field
-          label="Sale price"
+          label="Sale $"
           type="number"
           step="0.01"
           value={values.sale_price}
           onChange={(v) => set('sale_price', v)}
+          hint={
+            showDiscountHint
+              ? `Designer discount ${Number(values.designer_discount_pct)}% auto-applies when retail is set`
+              : undefined
+          }
         />
       </div>
 
-      <Field
-        label="Image URL"
-        type="url"
-        value={values.image_url}
-        onChange={(v) => set('image_url', v)}
-        placeholder="https://"
-      />
-
-      <Field
-        label="Product link"
-        type="url"
-        value={values.product_url}
-        onChange={(v) => set('product_url', v)}
-        placeholder="https://"
-      />
-
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="submit" size="sm">
-          {submitLabel}
-        </Button>
+      <div className="flex items-center justify-between pt-2">
+        {hostname ? (
+          <a
+            href={values.product_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            🔗 {hostname}
+          </a>
+        ) : (
+          <span />
+        )}
+        <div className="flex gap-2">
+          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" size="sm">
+            {submitLabel}
+          </Button>
+        </div>
       </div>
     </form>
   )
+}
+
+function prettyHostname(url) {
+  if (!url) return ''
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return ''
+  }
 }
 
 function numOrNull(v) {
