@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useProject, createRoom, updateProject } from '../hooks/useDb'
+import { useDiscounts } from '../hooks/useDiscounts'
 import RoomSection from '../components/RoomSection'
 import SummaryBar from '../components/SummaryBar'
 import Button from '../components/Button'
@@ -12,6 +13,7 @@ import { formatCurrency } from '../lib/pricing'
 export default function ProjectView() {
   const { id } = useParams()
   const { project, rooms, items, loading } = useProject(id)
+  const { discounts } = useDiscounts()
   const [roomOpen, setRoomOpen] = useState(false)
   const [roomName, setRoomName] = useState('')
   const [editingProject, setEditingProject] = useState(false)
@@ -136,6 +138,7 @@ export default function ProjectView() {
               key={room.id}
               room={room}
               items={items.filter((i) => i.room_id === room.id)}
+              discounts={discounts}
             />
           ))
         )}

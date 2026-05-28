@@ -16,7 +16,7 @@ import {
 } from '../hooks/useDb'
 import { totals, formatCurrency } from '../lib/pricing'
 
-export default function RoomSection({ room, items = [] }) {
+export default function RoomSection({ room, items = [], discounts = [] }) {
   const [mode, setMode] = useState('idle') // idle | manual | prefilled
   const [prefill, setPrefill] = useState(null)
   const [renaming, setRenaming] = useState(false)
@@ -132,6 +132,7 @@ export default function RoomSection({ room, items = [] }) {
           <ItemCard
             key={item.id}
             item={item}
+            discounts={discounts}
             onUpdate={(patch) => updateItem(item.id, patch)}
             onDuplicate={() => handleDuplicate(item)}
             onDelete={() => handleDeleteItem(item)}

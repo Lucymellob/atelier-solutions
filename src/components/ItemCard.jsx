@@ -5,9 +5,11 @@ import InlineEdit from './InlineEdit'
 import InlineFinalEdit from './InlineFinalEdit'
 import ImageEditModal from './ImageEditModal'
 import { unitTotal, qty, formatCurrency } from '../lib/pricing'
+import { effectiveDiscount, applyDiscount } from '../lib/discounts'
 
 export default function ItemCard({
   item,
+  discounts = [],
   onUpdate,
   onDuplicate,
   onDelete,
@@ -15,7 +17,29 @@ export default function ItemCard({
   const [imgOpen, setImgOpen] = useState(false)
   const total = unitTotal(item) * qty(item)
   const hasSale = item.sale_price != null && item.sale_price !== ''
-  const discount = item.designer_discount_pct
+  const discountPct = effectiveDiscount(item, discounts)
+
+  function handleRetailSave(v) {
+    const patch = { retail_price: v }
+    const retail = Number(v)
+    if (discountPct != null && discountPct > 0 && Number.isFinite(retail) && retail > 0) {
+      const expectedFromPrior =
+        item.retail_price != null
+          ? applyDiscount(item.retail_price, discountPct)
+          : null
+      const saleIsEmpty = item.sale_price == null || item.sale_price === ''
+      const saleMatchesAuto =
+        expectedFromPrior != null &&
+        Number(item.sale_price) === Number(expectedFromPrior)
+      if (saleIsEmpty || saleMatchesAuto) {
+        patch.sale_price = applyDiscount(retail, discountPct)
+      }
+      if (item.designer_discount_pct == null) {
+        patch.designer_discount_pct = discountPct
+      }
+    }
+    onUpdate(patch)
+  }
 
   return (
     <article className="group rounded-2xl border border-border bg-card p-5">
@@ -125,7 +149,7 @@ export default function ItemCard({
                 type="number"
                 step="0.01"
                 value={item.retail_price}
-                onSave={(v) => onUpdate({ retail_price: v })}
+                onSave={handleRetailSave}
                 placeholder="—"
                 format={(v) => formatCurrency(v)}
                 className="tabular-nums"
@@ -143,9 +167,9 @@ export default function ItemCard({
                 className="tabular-nums"
                 inputClassName="tabular-nums"
               />
-              {discount != null && discount > 0 && (
+              {discountPct != null && discountPct > 0 && (
                 <p className="mt-1 text-[10px] italic text-muted-foreground">
-                  Designer discount {Number(discount)}%
+                  Designer discount {discountPct}%
                 </p>
               )}
             </Cell>
