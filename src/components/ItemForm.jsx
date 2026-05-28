@@ -18,9 +18,17 @@ const empty = {
 
 export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add to project' }) {
   const [values, setValues] = useState({ ...empty, ...(initial || {}) })
+  const [saleTouched, setSaleTouched] = useState(
+    initial?.sale_price != null && initial?.sale_price !== '',
+  )
 
   function set(key, val) {
     setValues((v) => ({ ...v, [key]: val }))
+  }
+
+  function setSale(v) {
+    setSaleTouched(true)
+    set('sale_price', v)
   }
 
   function setRetail(v) {
@@ -28,9 +36,8 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
       const next = { ...cur, retail_price: v }
       const pct = Number(cur.designer_discount_pct)
       const retail = Number(v)
-      const saleEmpty = cur.sale_price === '' || cur.sale_price == null
       if (
-        saleEmpty &&
+        !saleTouched &&
         Number.isFinite(pct) &&
         pct > 0 &&
         Number.isFinite(retail) &&
@@ -131,7 +138,7 @@ export default function ItemForm({ initial, onSave, onCancel, submitLabel = 'Add
             type="number"
             step="0.01"
             value={values.sale_price}
-            onChange={(v) => set('sale_price', v)}
+            onChange={setSale}
           />
           {discountPct != null && discountPct > 0 && (
             <p className="mt-1 text-[10px] italic text-muted-foreground">

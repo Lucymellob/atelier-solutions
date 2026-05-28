@@ -1,9 +1,25 @@
 import { matchDiscount, applyDiscount, hostnameOf } from './discounts'
+import { supabase } from './supabase'
 
-export async function fetchProductMeta(url, { discounts = [] } = {}) {
+let cachedDiscounts = null
+let cacheTime = 0
+
+async function loadDiscounts() {
+  const now = Date.now()
+  if (cachedDiscounts && now - cacheTime < 60_000) return cachedDiscounts
+  const { data } = await supabase.from('vendor_discounts').select('*')
+  cachedDiscounts = data || []
+  cacheTime = now
+  return cachedDiscounts
+}
+
+export async function fetchProductMeta(url, { discounts } = {}) {
   if (!url || !/^https?:\/\//i.test(url)) {
     throw new Error('Please paste a full link starting with http:// or https://')
   }
+
+  const discountList =
+    Array.isArray(discounts) && discounts.length > 0 ? discounts : await loadDiscounts()
 
   let res
   try {
@@ -32,16 +48,14 @@ export async function fetchProductMeta(url, { discounts = [] } = {}) {
     throw new Error('That page did not return product details.')
   }
 
-  const match = matchDiscount(url, discounts)
+  const match = matchDiscount(url, discountList)
   const retail = payload.retail_price ?? null
   let sale = null
   let designer_discount_pct = null
 
-  if (match && retail != null) {
-    sale = applyDiscount(retail, match.discount_pct)
+  if (match) {
     designer_discount_pct = Number(match.discount_pct)
-  } else if (match) {
-    designer_discount_pct = Number(match.discount_pct)
+    if (retail != null) sale = applyDiscount(retail, match.discount_pct)
   }
 
   return {

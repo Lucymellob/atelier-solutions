@@ -234,14 +234,20 @@ function absoluteUrl(maybeUrl, base) {
   }
 }
 
+const NAMED_ENTITIES = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'",
+  nbsp: ' ', ndash: '–', mdash: '—', hellip: '…',
+  lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
+  laquo: '«', raquo: '»', copy: '©', reg: '®', trade: '™',
+  times: '×', divide: '÷', deg: '°', cent: '¢', pound: '£', euro: '€',
+  bull: '•', middot: '·', frac12: '½', frac14: '¼', frac34: '¾',
+}
+
 function decodeEntities(s) {
   return String(s)
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&([a-zA-Z]+);/g, (m, name) => NAMED_ENTITIES[name] ?? m)
 }
 
 function escapeRegex(s) {
