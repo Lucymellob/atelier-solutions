@@ -1,14 +1,16 @@
-import { effectiveUnitPrice, lineTotal, grandTotal } from './pricing'
+import { unitTotal, lineTotal, totals, shippingOf } from './pricing'
 
 export function exportProjectCSV(project, items) {
   const headers = [
     'Room',
     'Item',
     'Vendor',
+    'Specs',
     'Quantity',
     'Retail',
     'Sale',
     'Final',
+    'Shipping',
     'Unit (effective)',
     'Line total',
     'Product URL',
@@ -17,16 +19,20 @@ export function exportProjectCSV(project, items) {
     i.room_name ?? '',
     i.name ?? '',
     i.vendor ?? '',
+    i.specs ?? '',
     i.quantity ?? 1,
     fmtNum(i.retail_price),
     fmtNum(i.sale_price),
     fmtNum(i.final_price),
-    fmtNum(effectiveUnitPrice(i)),
+    fmtNum(shippingOf(i)),
+    fmtNum(unitTotal(i)),
     fmtNum(lineTotal(i)),
     i.product_url ?? '',
   ])
+  const t = totals(items)
   rows.push([])
-  rows.push(['', '', '', '', '', '', '', 'Grand total', fmtNum(grandTotal(items)), ''])
+  rows.push(['', '', '', '', '', '', '', '', 'Shipping', fmtNum(t.shipping), '', ''])
+  rows.push(['', '', '', '', '', '', '', '', 'Grand total', fmtNum(t.total), '', ''])
 
   const csv = [headers, ...rows]
     .map((row) => row.map(escapeCell).join(','))

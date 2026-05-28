@@ -4,8 +4,9 @@ import Checkbox from './Checkbox'
 import InlineEdit from './InlineEdit'
 import InlineFinalEdit from './InlineFinalEdit'
 import ImageEditModal from './ImageEditModal'
-import { unitTotal, qty, formatCurrency } from '../lib/pricing'
+import { lineTotal, qty, formatCurrency } from '../lib/pricing'
 import { effectiveDiscount, applyDiscount } from '../lib/discounts'
+import { decodeEntities } from '../lib/textClean'
 
 export default function ItemCard({
   item,
@@ -15,9 +16,13 @@ export default function ItemCard({
   onDelete,
 }) {
   const [imgOpen, setImgOpen] = useState(false)
-  const total = unitTotal(item) * qty(item)
+  const total = lineTotal(item)
   const hasSale = item.sale_price != null && item.sale_price !== ''
   const discountPct = effectiveDiscount(item, discounts)
+
+  const cleanName = decodeEntities(item.name)
+  const cleanVendor = decodeEntities(item.vendor)
+  const cleanSpecs = decodeEntities(item.specs)
 
   function handleRetailSave(v) {
     const patch = { retail_price: v }
@@ -39,6 +44,18 @@ export default function ItemCard({
       }
     }
     onUpdate(patch)
+  }
+
+  function handleNameSave(v) {
+    onUpdate({ name: v == null ? null : decodeEntities(v) })
+  }
+
+  function handleVendorSave(v) {
+    onUpdate({ vendor: v == null ? null : decodeEntities(v) })
+  }
+
+  function handleSpecsSave(v) {
+    onUpdate({ specs: v == null ? null : decodeEntities(v) })
   }
 
   return (
@@ -73,23 +90,23 @@ export default function ItemCard({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <InlineEdit
-                value={item.name}
-                onSave={(v) => onUpdate({ name: v })}
+                value={cleanName}
+                onSave={handleNameSave}
                 placeholder="Untitled item"
                 emptyLabel="Untitled item"
                 className="block font-serif text-2xl tracking-tight text-foreground w-full"
                 inputClassName="font-serif text-2xl"
               />
               <InlineEdit
-                value={item.vendor}
-                onSave={(v) => onUpdate({ vendor: v })}
+                value={cleanVendor}
+                onSave={handleVendorSave}
                 placeholder="Add vendor"
                 emptyLabel="Add vendor"
                 className="mt-1 block font-serif italic text-muted-foreground"
               />
               <InlineEdit
-                value={item.specs}
-                onSave={(v) => onUpdate({ specs: v })}
+                value={cleanSpecs}
+                onSave={handleSpecsSave}
                 placeholder="Add specs (fabric, dimensions, finish…)"
                 emptyLabel="Add specs"
                 className="mt-1 block text-xs text-muted-foreground"
@@ -133,7 +150,7 @@ export default function ItemCard({
             </div>
           </div>
 
-          <dl className="mt-5 grid grid-cols-5 gap-4 text-sm">
+          <dl className="mt-5 grid grid-cols-6 gap-3 text-sm">
             <Cell label="Qty">
               <InlineEdit
                 type="number"
@@ -176,7 +193,20 @@ export default function ItemCard({
             <Cell label="Final">
               <InlineFinalEdit
                 value={item.final_price}
+                defaultDraft={item.sale_price}
                 onSave={(val) => onUpdate({ final_price: val })}
+              />
+            </Cell>
+            <Cell label="Shipping">
+              <InlineEdit
+                type="number"
+                step="0.01"
+                value={item.shipping}
+                onSave={(v) => onUpdate({ shipping: v })}
+                placeholder="—"
+                format={(v) => formatCurrency(v)}
+                className="tabular-nums"
+                inputClassName="tabular-nums"
               />
             </Cell>
             <Cell label="Total" emphasize>

@@ -24,6 +24,10 @@ export function unitTotal(item) {
   return num(item.final_price) ?? num(item.sale_price) ?? 0
 }
 
+export function shippingOf(item) {
+  return num(item.shipping) ?? 0
+}
+
 export function lineRetail(item) {
   return (unitRetail(item) ?? 0) * qty(item)
 }
@@ -34,11 +38,12 @@ export function lineSale(item) {
 
 export function lineConfirmed(item) {
   const f = unitFinal(item)
-  return f == null ? 0 : f * qty(item)
+  if (f == null) return 0
+  return f * qty(item) + shippingOf(item)
 }
 
 export function lineTotal(item) {
-  return unitTotal(item) * qty(item)
+  return unitTotal(item) * qty(item) + shippingOf(item)
 }
 
 function includes(item) {
@@ -51,6 +56,7 @@ export function totals(items) {
     retail: budgeted.reduce((s, i) => s + lineRetail(i), 0),
     sale: budgeted.reduce((s, i) => s + lineSale(i), 0),
     confirmed: budgeted.reduce((s, i) => s + lineConfirmed(i), 0),
+    shipping: budgeted.reduce((s, i) => s + shippingOf(i), 0),
     total: budgeted.reduce((s, i) => s + lineTotal(i), 0),
   }
 }

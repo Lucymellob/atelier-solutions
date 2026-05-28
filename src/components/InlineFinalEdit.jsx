@@ -1,17 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatCurrency } from '../lib/pricing'
 
-export default function InlineFinalEdit({ value, onSave }) {
+export default function InlineFinalEdit({ value, onSave, defaultDraft = null }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState('')
   const inputRef = useRef(null)
 
   useEffect(() => {
     if (editing) {
-      setDraft(value == null || value === '' ? '' : String(value))
+      if (value != null && value !== '') {
+        setDraft(String(value))
+      } else if (defaultDraft != null && defaultDraft !== '') {
+        setDraft(String(defaultDraft))
+      } else {
+        setDraft('')
+      }
       requestAnimationFrame(() => inputRef.current?.select())
     }
-  }, [editing, value])
+  }, [editing, value, defaultDraft])
 
   function commit() {
     if (draft === '') {
@@ -52,7 +58,11 @@ export default function InlineFinalEdit({ value, onSave }) {
         type="button"
         onClick={() => setEditing(true)}
         className="font-serif italic text-pending hover:text-pending/80"
-        title="Click to set the final price"
+        title={
+          defaultDraft != null
+            ? `Click to confirm (will default to ${formatCurrency(defaultDraft)})`
+            : 'Click to set the final price'
+        }
       >
         pending
       </button>
