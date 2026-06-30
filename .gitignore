@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# don't commit huge raw photos — only food-N.jpg / portrait.jpg etc.
+images/.DS_Store
+images/[0-9]*.jpg
+images/[0-9]*.png
+images/[0-9]*.jpeg
