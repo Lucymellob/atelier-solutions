@@ -48,7 +48,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;justify-content:
 .hero-img{position:relative;overflow:hidden;background:var(--linen)}
 .hero-portrait{width:100%;height:100%;min-height:600px;object-fit:cover;object-position:center top;display:block}
 .ph-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
-.strip-ph{position:relative}
 .ph-hero{width:100%;height:100%;min-height:600px;background:var(--blush-lt);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .ph-ring{width:60px;height:60px;border-radius:50%;border:1px dashed var(--blush-deep);display:flex;align-items:center;justify-content:center;color:var(--blush-deep);font-size:22px}
 .ph-lbl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--blush-deep)}
@@ -83,11 +82,21 @@ section{padding:104px 72px}
 .svc-desc{font-size:13.5px;line-height:1.85;color:var(--stone)}
 
 /* STRIP */
-.strip{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:3px;height:420px;padding:0}
-.strip-ph{background:var(--blush-lt);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
-.strip-ph:nth-child(2){background:var(--fog)}
-.strip-ph:nth-child(3){background:var(--linen)}
-.strip-ph:nth-child(4){background:var(--blush-lt)}
+/* GALLERY CAROUSEL */
+.gallery{position:relative;width:100%;height:620px;background:var(--ink);overflow:hidden}
+.gallery-viewport{width:100%;height:100%;overflow:hidden}
+.gallery-track{display:flex;height:100%;transition:transform .7s cubic-bezier(.4,0,.2,1);will-change:transform}
+.gallery-slide{flex:0 0 100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--ink)}
+.gallery-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);color:var(--white);cursor:pointer;font-size:22px;font-family:'Cormorant',serif;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:all .25s;z-index:10}
+.gallery-arrow:hover{background:rgba(0,0,0,.6);border-color:var(--blush)}
+.gallery-prev{left:32px}
+.gallery-next{right:32px}
+.gallery-meta{position:absolute;top:24px;right:32px;color:var(--white);font-size:11px;letter-spacing:.24em;text-transform:uppercase;z-index:10;opacity:.85}
+.gallery-dots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
+.gallery-dot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:transparent;cursor:pointer;padding:0;transition:all .25s}
+.gallery-dot.active{background:var(--blush);border-color:var(--blush);transform:scale(1.4)}
+.gallery-dot:hover{border-color:var(--blush)}
 
 /* THE BASIC */
 .basic-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:580px}
@@ -167,8 +176,12 @@ footer a:hover{color:var(--white)}
   .duo{height:280px}
   .svc-top{flex-direction:column;gap:24px;align-items:flex-start}
   .svc-grid{grid-template-columns:1fr}
-  .strip{grid-template-columns:1fr 1fr;height:auto}
-  .strip-ph{height:180px}
+  .gallery{height:380px}
+  .gallery-arrow{width:42px;height:42px;font-size:18px}
+  .gallery-prev{left:16px}
+  .gallery-next{right:16px}
+  .gallery-meta{top:16px;right:16px;font-size:10px}
+  .gallery-dots{bottom:18px}
   .basic-l{padding:64px 28px}.basic-r{padding:56px 28px}
   .contact-section{padding:72px 28px;gap:48px}
   footer{flex-direction:column;gap:10px;text-align:center;padding:28px}
@@ -257,25 +270,18 @@ footer a:hover{color:var(--white)}
   </div>
 </section>
 
-<!-- PHOTO STRIP -->
-<div class="strip">
-  <div class="strip-ph">
-    <img src="/images/food-3.jpg" alt="" class="ph-img" onerror="this.style.display='none'"/>
-    <span class="ph-lbl" style="color:var(--blush-deep)">food-3.jpg</span>
+<!-- PHOTO GALLERY CAROUSEL -->
+<section class="gallery fade">
+  <div class="gallery-viewport">
+    <div class="gallery-track" id="galleryTrack"></div>
   </div>
-  <div class="strip-ph">
-    <img src="/images/food-4.jpg" alt="" class="ph-img" onerror="this.style.display='none'"/>
-    <span class="ph-lbl" style="color:var(--stone)">food-4.jpg</span>
+  <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Previous photo">&#x2039;</button>
+  <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Next photo">&#x203A;</button>
+  <div class="gallery-meta">
+    <span class="gallery-count"><span id="galleryCurrent">1</span> &nbsp;/&nbsp; <span id="galleryTotal">19</span></span>
   </div>
-  <div class="strip-ph">
-    <img src="/images/food-5.jpg" alt="" class="ph-img" onerror="this.style.display='none'"/>
-    <span class="ph-lbl" style="color:var(--stone)">food-5.jpg</span>
-  </div>
-  <div class="strip-ph">
-    <img src="/images/food-6.jpg" alt="" class="ph-img" onerror="this.style.display='none'"/>
-    <span class="ph-lbl" style="color:var(--blush-deep)">food-6.jpg</span>
-  </div>
-</div>
+  <div class="gallery-dots" id="galleryDots"></div>
+</section>
 
 <!-- THE BASIC -->
 <div id="basic" class="basic-wrap">
@@ -526,6 +532,65 @@ tabs.forEach((tab,i)=>{
     track.style.transform=`translateX(-${idx*100}%)`;
   });
 });
+
+// Photo gallery carousel
+(function(){
+  const TOTAL=19;
+  const gTrack=document.getElementById('galleryTrack');
+  const gDots=document.getElementById('galleryDots');
+  const gCurrent=document.getElementById('galleryCurrent');
+  const gTotalEl=document.getElementById('galleryTotal');
+  const gallerySection=document.querySelector('.gallery');
+  if(!gTrack||!gDots||!gallerySection)return;
+  gTotalEl.textContent=TOTAL;
+  let current=0;
+  for(let i=1;i<=TOTAL;i++){
+    const slide=document.createElement('div');
+    slide.className='gallery-slide';
+    const img=document.createElement('img');
+    img.src=`/images/gallery-${i}.jpg`;
+    img.alt='';
+    img.loading=i<=2?'eager':'lazy';
+    img.decoding='async';
+    slide.appendChild(img);
+    gTrack.appendChild(slide);
+    const dot=document.createElement('button');
+    dot.className='gallery-dot'+(i===1?' active':'');
+    dot.setAttribute('aria-label',`Go to photo ${i}`);
+    dot.dataset.idx=i-1;
+    gDots.appendChild(dot);
+  }
+  function goTo(idx){
+    current=((idx%TOTAL)+TOTAL)%TOTAL;
+    gTrack.style.transform=`translateX(-${current*100}%)`;
+    gCurrent.textContent=current+1;
+    gDots.querySelectorAll('.gallery-dot').forEach((d,i)=>d.classList.toggle('active',i===current));
+  }
+  document.getElementById('galleryPrev').addEventListener('click',()=>{goTo(current-1);resetAuto()});
+  document.getElementById('galleryNext').addEventListener('click',()=>{goTo(current+1);resetAuto()});
+  gDots.addEventListener('click',e=>{
+    if(e.target.classList.contains('gallery-dot')){goTo(+e.target.dataset.idx);resetAuto()}
+  });
+  // Keyboard nav when gallery in view
+  document.addEventListener('keydown',e=>{
+    const r=gallerySection.getBoundingClientRect();
+    if(r.bottom<0||r.top>window.innerHeight)return;
+    if(e.key==='ArrowLeft'){goTo(current-1);resetAuto()}
+    if(e.key==='ArrowRight'){goTo(current+1);resetAuto()}
+  });
+  // Touch swipe
+  let touchStart=0;
+  gTrack.addEventListener('touchstart',e=>{touchStart=e.touches[0].clientX},{passive:true});
+  gTrack.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStart;
+    if(Math.abs(dx)>40){goTo(current+(dx<0?1:-1));resetAuto()}
+  });
+  // Auto-advance with pause on hover
+  let auto=setInterval(()=>goTo(current+1),6000);
+  function resetAuto(){clearInterval(auto);auto=setInterval(()=>goTo(current+1),6000)}
+  gallerySection.addEventListener('mouseenter',()=>clearInterval(auto));
+  gallerySection.addEventListener('mouseleave',()=>{auto=setInterval(()=>goTo(current+1),6000)});
+})();
 </script>
 </body>
 </html>
