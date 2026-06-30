@@ -1,19 +1,518 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap"
-    />
-    <title>Atelier — Sourcing & Budget</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ms. Mello — Private Chef</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:       #191917;
+  --ink-soft:  #3A3A38;
+  --stone:     #7A7A76;
+  --stone-lt:  #AEAEAA;
+  --fog:       #E8E6E1;
+  --linen:     #F0EDE8;
+  --paper:     #F7F5F2;
+  --white:     #FDFCFB;
+  --blush:     #D4BDB8;
+  --blush-lt:  #EAE0DD;
+  --blush-deep:#B09490;
+}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;justify-content:space-between;align-items:center;padding:0 56px;height:62px;background:rgba(247,245,242,0.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--fog)}
+.logo{font-family:'Cormorant',serif;font-size:19px;font-weight:400;letter-spacing:.06em;color:var(--ink);text-decoration:none}
+.nav-links{display:flex;gap:44px;list-style:none}
+.nav-links a{font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{padding:9px 28px;border:1px solid var(--ink);color:var(--ink);font-size:10px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:all .22s}
+.nav-cta:hover{background:var(--ink);color:var(--white)}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:52% 48%;min-height:100vh;padding-top:62px}
+.hero-text{display:flex;flex-direction:column;justify-content:center;padding:80px 60px 80px 72px}
+.eyebrow{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone-lt);margin-bottom:36px}
+.hero-hed{font-family:'Cormorant',serif;font-size:clamp(56px,7.5vw,94px);font-weight:300;line-height:.93;letter-spacing:-.01em;color:var(--ink);margin-bottom:40px}
+.hero-hed em{font-style:italic;color:var(--blush-deep)}
+.hero-bar{width:32px;height:1px;background:var(--blush);margin-bottom:28px}
+.hero-sub{font-size:15px;line-height:1.9;color:var(--ink-soft);max-width:390px;margin-bottom:56px}
+.hero-actions{display:flex;gap:20px;align-items:center}
+.btn-dark{padding:14px 42px;background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .22s}
+.btn-dark:hover{background:var(--ink-soft)}
+.btn-quiet{font-size:12px;color:var(--stone);text-decoration:none;letter-spacing:.06em;border-bottom:1px solid var(--fog);padding-bottom:2px;transition:all .2s}
+.btn-quiet:hover{color:var(--ink);border-color:var(--blush)}
+.hero-img{position:relative;overflow:hidden;background:var(--linen)}
+.ph-hero{width:100%;height:100%;min-height:600px;background:var(--blush-lt);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ph-ring{width:60px;height:60px;border-radius:50%;border:1px dashed var(--blush-deep);display:flex;align-items:center;justify-content:center;color:var(--blush-deep);font-size:22px}
+.ph-lbl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--blush-deep)}
+.hero-card{position:absolute;bottom:44px;left:36px;background:var(--white);padding:20px 24px;border-left:2px solid var(--blush);max-width:250px}
+.card-quote{font-family:'Cormorant',serif;font-style:italic;font-size:14px;line-height:1.65;color:var(--ink-soft)}
+
+/* RULE */
+hr.rule{border:none;border-top:1px solid var(--fog);margin:0 72px}
+
+/* SECTIONS */
+section{padding:104px 72px}
+.s-eye{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--blush-deep);display:block;margin-bottom:20px}
+.s-title{font-family:'Cormorant',serif;font-size:clamp(36px,4.8vw,58px);font-weight:300;line-height:1.04;color:var(--ink);margin-bottom:32px}
+.s-title em{font-style:italic}
+.s-body{font-size:15px;line-height:1.9;color:var(--ink-soft)}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.duo{position:relative;height:560px}
+.duo-main{position:absolute;top:0;left:0;width:78%;height:85%;background:var(--blush-lt);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.duo-accent{position:absolute;bottom:0;right:0;width:50%;height:46%;background:var(--fog);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.pull{font-family:'Cormorant',serif;font-size:20px;font-style:italic;font-weight:300;color:var(--ink);line-height:1.6;padding:28px 0;border-top:1px solid var(--fog);border-bottom:1px solid var(--fog);margin:32px 0}
+
+/* SERVICES */
+.svc-section{background:var(--ink)}
+.svc-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:72px}
+.svc-intro{font-size:15px;line-height:1.9;color:var(--stone);max-width:380px}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.05)}
+.svc-card{background:var(--ink);padding:48px 38px;transition:background .22s;cursor:default}
+.svc-card:hover{background:#222220}
+.svc-n{font-family:'Cormorant',serif;font-size:48px;font-weight:300;color:rgba(212,189,184,.18);line-height:1;margin-bottom:24px}
+.svc-name{font-family:'Cormorant',serif;font-size:22px;font-weight:300;color:var(--white);margin-bottom:14px}
+.svc-desc{font-size:13.5px;line-height:1.85;color:var(--stone)}
+
+/* STRIP */
+.strip{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:3px;height:420px;padding:0}
+.strip-ph{background:var(--blush-lt);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.strip-ph:nth-child(2){background:var(--fog)}
+.strip-ph:nth-child(3){background:var(--linen)}
+.strip-ph:nth-child(4){background:var(--blush-lt)}
+
+/* THE BASIC */
+.basic-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:580px}
+.basic-l{padding:96px 72px;display:flex;flex-direction:column;justify-content:center}
+.basic-r{background:var(--linen);border-left:1px solid var(--fog);padding:80px 64px;display:flex;flex-direction:column;justify-content:center}
+.bq{font-family:'Cormorant',serif;font-size:24px;font-style:italic;font-weight:300;color:var(--ink);line-height:1.55;margin:32px 0;padding-left:20px;border-left:2px solid var(--blush)}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:18px;margin-top:24px}
+.feat-list li{display:flex;gap:14px;align-items:flex-start;font-size:14px;color:var(--ink-soft);line-height:1.75}
+.feat-dot{width:4px;height:4px;border-radius:50%;background:var(--blush-deep);flex-shrink:0;margin-top:9px}
+.basic-cta{display:inline-block;margin-top:40px;padding:13px 36px;border:1px solid var(--ink);color:var(--ink);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:all .22s;align-self:flex-start}
+.basic-cta:hover{background:var(--ink);color:var(--white)}
+
+/* MISSION */
+.mission-section{padding:104px 72px}
+.mission-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:80px;align-items:start}
+.mission-left{position:sticky;top:120px}
+.mission-right .s-body{max-width:560px}
+.mission-pills{margin-top:48px;display:flex;flex-direction:column;gap:1px;background:var(--fog);border-top:1px solid var(--fog);border-bottom:1px solid var(--fog)}
+.pill{background:var(--paper);padding:28px 32px;transition:background .25s}
+.pill:hover{background:var(--linen)}
+.pill-title{font-family:'Cormorant',serif;font-size:21px;font-weight:300;color:var(--ink);margin-bottom:10px}
+.pill-body{font-size:14px;line-height:1.8;color:var(--ink-soft);max-width:540px}
+
+/* MENU */
+.menu-wrap{display:grid;grid-template-columns:260px 1fr;gap:88px;align-items:start}
+.menu-tabs-wrap{width:100%}
+.menu-tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--fog);margin-bottom:8px}
+.menu-tab{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-lt);padding:14px 18px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;white-space:nowrap}
+.menu-tab:first-child{padding-left:0}
+.menu-tab:hover{color:var(--ink-soft)}
+.menu-tab.active{color:var(--ink);border-bottom-color:var(--blush-deep)}
+.menu-panels{position:relative;overflow:hidden;width:100%}
+.menu-track{display:flex;transition:transform .55s cubic-bezier(.65,.05,.36,1);will-change:transform}
+.menu-panel{flex:0 0 100%;min-width:100%;padding-right:8px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.menu-row{display:grid;grid-template-columns:110px 1fr;gap:28px;padding:28px 0;border-bottom:1px solid var(--fog)}
+.menu-row:last-child{border-bottom:none}
+.m-course{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone-lt);padding-top:5px}
+.m-dish{font-family:'Cormorant',serif;font-size:23px;font-weight:300;color:var(--ink);margin-bottom:6px}
+.m-desc{font-size:13px;color:var(--stone);letter-spacing:.03em}
+
+/* CONTACT */
+.contact-section{background:var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:100px;padding:120px 72px}
+.c-left .s-title{color:var(--white)}
+.c-left .s-eye{color:var(--blush)}
+.c-left p{font-size:15px;line-height:1.9;color:var(--stone);margin-top:20px;max-width:340px}
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form input,.form textarea,.form select{width:100%;padding:15px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.form input::placeholder,.form textarea::placeholder{color:var(--stone)}
+.form input:focus,.form textarea:focus,.form select:focus{border-color:var(--blush-deep)}
+.form select option{background:var(--ink)}
+.form textarea{resize:vertical;min-height:110px}
+.form-btn{padding:16px;background:var(--blush-deep);color:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .22s;margin-top:4px}
+.form-btn:hover{background:var(--blush)}
+
+/* FOOTER */
+footer{background:var(--ink);border-top:1px solid rgba(255,255,255,.06);padding:28px 72px;display:flex;justify-content:space-between;align-items:center}
+footer span{font-size:11px;color:var(--stone);letter-spacing:.06em}
+footer a{font-size:11px;color:var(--blush);text-decoration:none;letter-spacing:.06em;transition:color .2s}
+footer a:hover{color:var(--white)}
+
+/* FADE */
+.fade{opacity:0;transform:translateY(22px);transition:opacity .85s ease,transform .85s ease}
+.fade.in{opacity:1;transform:none}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 24px}.nav-links{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-text{padding:56px 28px 48px}
+  .hero-img{height:360px}
+  section{padding:64px 28px}
+  hr.rule{margin:0 28px}
+  .about-grid,.basic-wrap,.menu-wrap,.contact-section,.mission-wrap{grid-template-columns:1fr}
+  .mission-left{position:static}
+  .duo{height:280px}
+  .svc-top{flex-direction:column;gap:24px;align-items:flex-start}
+  .svc-grid{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr 1fr;height:auto}
+  .strip-ph{height:180px}
+  .basic-l{padding:64px 28px}.basic-r{padding:56px 28px}
+  .contact-section{padding:72px 28px;gap:48px}
+  footer{flex-direction:column;gap:10px;text-align:center;padding:28px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#top" class="logo">Chef Lucy Mello</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#basic">The Basic</a></li>
+    <li><a href="#menu">Menus</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Inquire</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-text">
+    <p class="eyebrow">Private Chef &nbsp;·&nbsp; Miami, Florida</p>
+    <h1 class="hero-hed">Fine dining<br>experiences,<br><em>at home.</em></h1>
+    <div class="hero-bar"></div>
+    <p class="hero-sub">Private chef experiences designed and cooked in your home — from intimate dinners and holiday gatherings to dinner clubs, brunches, and weekly meal services.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-dark">Book an experience</a>
+      <a href="#services" class="btn-quiet">See what's offered</a>
+    </div>
+  </div>
+  <div class="hero-img">
+    <div class="ph-hero">
+      <div class="ph-ring">+</div>
+      <span class="ph-lbl">Your portrait here</span>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid fade">
+    <div class="duo">
+      <div class="duo-main"><span class="ph-lbl" style="color:var(--blush-deep)">Food photo</span></div>
+      <div class="duo-accent"><span class="ph-lbl" style="color:var(--stone)">Food photo</span></div>
+    </div>
+    <div>
+      <span class="s-eye">About</span>
+      <h2 class="s-title">Trained in fine dining.<br><em>Built for your home.</em></h2>
+      <p class="s-body">Luciana Mello is a Miami-based private chef bringing fine dining technique into intimate settings — from holiday dinners and birthday celebrations to weekly meal services for families who want more than takeout.</p>
+      <p class="pull">Every experience is designed around you — your guests, your space, your occasion. No two dinners are ever the same.</p>
+      <p class="s-body">Rooted in Brazilian heritage and trained in classical technique, Lucy blends precision with warmth. Her mission: to give Brazilian cuisine the fine dining recognition it deserves — and to make every table she sets the most memorable seat in the room.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- SERVICES -->
+<section id="services" class="svc-section">
+  <div class="svc-top fade">
+    <div>
+      <span class="s-eye">Services</span>
+      <h2 class="s-title" style="color:var(--white);margin-bottom:0">Three ways to<br><em>book me.</em></h2>
+    </div>
+    <p class="svc-intro">Every experience is designed from scratch around your occasion, your guests, and your space. No templates, no shortcuts.</p>
+  </div>
+  <div class="svc-grid fade">
+    <div class="svc-card">
+      <div class="svc-n">01</div>
+      <div class="svc-name">Private Dinner Experiences</div>
+      <p class="svc-desc">Multi-course dinners for 2 to 20 guests, fully cooked and served in your home. Custom menus, premium ingredients, beautiful plating, and complete kitchen cleanup. Perfect for birthdays, anniversaries, dinner parties, and holidays.</p>
+    </div>
+    <div class="svc-card">
+      <div class="svc-n">02</div>
+      <div class="svc-name">Dinner Club & Events</div>
+      <p class="svc-desc">Curated seasonal dinner club evenings, supper clubs, brand activations, and intimate events. Story-driven menus that make the night feel like an occasion guests will remember and tell their friends about.</p>
+    </div>
+    <div class="svc-card">
+      <div class="svc-n">03</div>
+      <div class="svc-name">Weekly Meal Services</div>
+      <p class="svc-desc">In-home meal preparation for busy families and individuals who want elevated, nourishing food without the daily planning. Fully customized to your preferences, schedule, and dietary needs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO STRIP -->
+<div class="strip">
+  <div class="strip-ph"><span class="ph-lbl" style="color:var(--blush-deep)">Food photo</span></div>
+  <div class="strip-ph"><span class="ph-lbl" style="color:var(--stone)">Food photo</span></div>
+  <div class="strip-ph"><span class="ph-lbl" style="color:var(--stone)">Food photo</span></div>
+  <div class="strip-ph"><span class="ph-lbl" style="color:var(--blush-deep)">Food photo</span></div>
+</div>
+
+<!-- THE BASIC -->
+<div id="basic" class="basic-wrap">
+  <div class="basic-l fade">
+    <span class="s-eye">The Basic &nbsp;·&nbsp; thebasic.host</span>
+    <h2 class="s-title">Host like<br><em>a chef.</em></h2>
+    <p class="s-body">The Basic is a dinner club and digital hosting platform built on one belief: anyone can create a remarkable table. At its heart is a curated menu builder that walks you through every step — concept, coursing, shopping, timing, and presentation.</p>
+    <div class="bq">I built The Basic because the menu was never the hard part. Hosting well is — so I made it easier.</div>
+    <a href="https://thebasic.host" target="_blank" class="basic-cta">Visit thebasic.host</a>
+  </div>
+  <div class="basic-r fade">
+    <span class="s-eye">What you get</span>
+    <ul class="feat-list">
+      <li><span class="feat-dot"></span><span>A curated menu builder that does the thinking for you — coursing, timing, and pairing included.</span></li>
+      <li><span class="feat-dot"></span><span>Shopping lists generated from your menu so you arrive at the market with total clarity.</span></li>
+      <li><span class="feat-dot"></span><span>Hosting guides that handle the logistics so you can be fully present with your guests all night.</span></li>
+      <li><span class="feat-dot"></span><span>Lucy's own dinner club experience distilled into a tool anyone can use.</span></li>
+    </ul>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- MISSION -->
+<section id="mission" class="mission-section">
+  <div class="mission-wrap fade">
+    <div class="mission-left">
+      <span class="s-eye">My Mission</span>
+      <h2 class="s-title">Brazilian roots.<br>French technique.<br><em>One plate at a time.</em></h2>
+    </div>
+    <div class="mission-right">
+      <p class="s-body">Brazilian cuisine has been left out of the fine dining conversation for too long — and I am on a mission to change that. Every plate I create is part of a larger story: exposing the depth, complexity, and beauty of Brazilian food culture to a world that has barely begun to taste it.</p>
+      <p class="s-body" style="margin-top:24px">My foundation is classical French technique. My soul is Brazilian. Together they shape a way of cooking that is rigorous and personal, refined and rooted.</p>
+      <div class="mission-pills">
+        <div class="pill">
+          <div class="pill-title">Beyond Brazilian</div>
+          <p class="pill-body">While Brazilian fine dining is my heart, I'm trained across French, Italian, Mediterranean, Latin, and modern American cuisines. Every menu is shaped around your taste, not mine.</p>
+        </div>
+        <div class="pill">
+          <div class="pill-title">Health-Focused Cooking</div>
+          <p class="pill-body">Beautiful food and nourishing food are the same food. Menus are designed with care for nutrition, ingredient quality, and how you want to feel the next morning.</p>
+        </div>
+        <div class="pill">
+          <div class="pill-title">Dietary Adaptability</div>
+          <p class="pill-body">Gluten-free, vegan, pescatarian, kosher, keto, allergies and aversions — every menu adapts seamlessly without sacrificing what makes it feel like an occasion.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-wrap fade">
+    <div>
+      <span class="s-eye">Sample Menus</span>
+      <h2 class="s-title">A taste of<br>what's <em>possible.</em></h2>
+      <p class="s-body" style="font-size:13.5px;margin-top:16px;max-width:240px">Every menu is custom-built around you. These are starting points — your dinner is its own story.</p>
+    </div>
+    <div class="menu-tabs-wrap">
+      <div class="menu-tabs" role="tablist">
+        <button class="menu-tab active" data-tab="brazilian" role="tab">Brazilian</button>
+        <button class="menu-tab" data-tab="french" role="tab">French</button>
+        <button class="menu-tab" data-tab="italian" role="tab">Italian</button>
+        <button class="menu-tab" data-tab="mediterranean" role="tab">Mediterranean</button>
+        <button class="menu-tab" data-tab="fusion" role="tab">Brazilian Fusion</button>
+        <button class="menu-tab" data-tab="wildcard" role="tab">Wild Card</button>
+      </div>
+
+      <div class="menu-panels">
+        <div class="menu-track">
+        <!-- Brazilian -->
+        <div class="menu-panel" data-panel="brazilian">
+          <div class="menu-row">
+            <span class="m-course">Entrada</span>
+            <div><div class="m-dish">Coxinha de Camarão</div><div class="m-desc">Tiger Prawns · Cassava Crust · Malagueta Aioli</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Segundo</span>
+            <div><div class="m-dish">Salada de Palmito</div><div class="m-desc">Hearts of Palm · Mango · Toasted Coconut · Lime Vinaigrette</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Prato Principal</span>
+            <div><div class="m-dish">Peixe da Costa</div><div class="m-desc">Whole Fish · Dendê Farofa · Herb Chimichurri · Turmeric Oil</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Sobremesa</span>
+            <div><div class="m-dish">Brigadeiro Glacé</div><div class="m-desc">Dark Chocolate · Condensed Milk · Sea Salt · Gold Leaf</div></div>
+          </div>
+        </div>
+
+        <!-- French -->
+        <div class="menu-panel" data-panel="french">
+          <div class="menu-row">
+            <span class="m-course">Entrée</span>
+            <div><div class="m-dish">Tartare de Boeuf</div><div class="m-desc">Hand-Cut Wagyu · Cornichons · Quail Yolk · Toasted Brioche</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Poisson</span>
+            <div><div class="m-dish">Saint-Jacques au Beurre Blanc</div><div class="m-desc">Seared Scallops · Beurre Blanc · Caviar · Microgreens</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Plat Principal</span>
+            <div><div class="m-dish">Canard à l'Orange</div><div class="m-desc">Duck Breast · Bitter Orange · Pomme Purée · Wilted Greens</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Dessert</span>
+            <div><div class="m-dish">Tarte au Citron</div><div class="m-desc">Meyer Lemon Tart · Italian Meringue · Wild Honey</div></div>
+          </div>
+        </div>
+
+        <!-- Italian -->
+        <div class="menu-panel" data-panel="italian">
+          <div class="menu-row">
+            <span class="m-course">Antipasto</span>
+            <div><div class="m-dish">Burrata di Puglia</div><div class="m-desc">Stone Fruit · Aged Balsamic · Basil Oil · Sea Salt</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Primo</span>
+            <div><div class="m-dish">Tagliatelle al Tartufo</div><div class="m-desc">Fresh Tagliatelle · Black Truffle · Parmigiano · Brown Butter</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Secondo</span>
+            <div><div class="m-dish">Branzino al Forno</div><div class="m-desc">Whole Roasted Branzino · Lemon · Capers · Castelvetrano Olives</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Dolce</span>
+            <div><div class="m-dish">Tiramisù Classico</div><div class="m-desc">Mascarpone · Espresso · Marsala · Cocoa</div></div>
+          </div>
+        </div>
+
+        <!-- Mediterranean -->
+        <div class="menu-panel" data-panel="mediterranean">
+          <div class="menu-row">
+            <span class="m-course">Mezze</span>
+            <div><div class="m-dish">Whipped Feta & Roasted Beets</div><div class="m-desc">Smoked Honey · Pistachios · Mint · Warm Flatbread</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Small Plate</span>
+            <div><div class="m-dish">Octopus à la Plancha</div><div class="m-desc">Charred Octopus · Romesco · Preserved Lemon · Smoked Paprika</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Main</span>
+            <div><div class="m-dish">Lamb Tagine</div><div class="m-desc">Slow-Braised Lamb · Apricot · Saffron Couscous · Harissa Yogurt</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Sweet</span>
+            <div><div class="m-dish">Olive Oil Cake</div><div class="m-desc">Citrus Olive Oil · Crème Fraîche · Candied Orange</div></div>
+          </div>
+        </div>
+
+        <!-- Brazilian Fusion -->
+        <div class="menu-panel" data-panel="fusion">
+          <div class="menu-row">
+            <span class="m-course">Opener</span>
+            <div><div class="m-dish">Pão de Queijo Soufflé</div><div class="m-desc">Cheese Cloud · Truffle Honey · Cracked Pepper</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">First</span>
+            <div><div class="m-dish">Tuna Ceviche · Coconut Leite</div><div class="m-desc">Yellowfin Tuna · Coconut Milk · Yuzu · Crispy Cassava</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Main</span>
+            <div><div class="m-dish">Picanha au Poivre</div><div class="m-desc">Brazilian Picanha · Cognac Pepper Sauce · Bone Marrow Farofa</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Finish</span>
+            <div><div class="m-dish">Açaí Pavlova</div><div class="m-desc">Amazonian Açaí · Vanilla Cream · Toasted Brazil Nuts</div></div>
+          </div>
+        </div>
+
+        <!-- Wild Card -->
+        <div class="menu-panel" data-panel="wildcard">
+          <div class="menu-row">
+            <span class="m-course">Welcome</span>
+            <div><div class="m-dish">Hamachi Crudo · Passionfruit</div><div class="m-desc">Hamachi · Passionfruit Tigre de Leche · Crispy Quinoa · Avocado</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Surprise</span>
+            <div><div class="m-dish">Miso-Glazed Black Cod · Caipirinha Reduction</div><div class="m-desc">Black Cod · White Miso · Cachaça · Lime · Bok Choy</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Showstopper</span>
+            <div><div class="m-dish">Short Rib · Mole Negro · Plantain Purée</div><div class="m-desc">48-Hour Short Rib · Oaxacan Mole · Sweet Plantain · Pickled Onion</div></div>
+          </div>
+          <div class="menu-row">
+            <span class="m-course">Last Bite</span>
+            <div><div class="m-dish">Brigadeiro Tiramisù</div><div class="m-desc">Brazilian Brigadeiro · Espresso · Mascarpone · Cocoa Dust</div></div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="c-left fade">
+    <span class="s-eye">Inquire</span>
+    <h2 class="s-title">Let's make<br>something <em style="color:var(--blush)">beautiful.</em></h2>
+    <p>Tell me about your vision. I'll take care of everything else.</p>
+  </div>
+  <form class="form fade" onsubmit="sent(event)">
+    <div class="form-row">
+      <input type="text" placeholder="Your name" required/>
+      <input type="email" placeholder="Email address" required/>
+    </div>
+    <select>
+      <option value="" disabled selected>Type of experience</option>
+      <option>Private dinner (up to 10 guests)</option>
+      <option>Dinner club event</option>
+      <option>Holiday experience</option>
+      <option>Weekly meal prep</option>
+      <option>Brand or media collaboration</option>
+      <option>Something else</option>
+    </select>
+    <input type="text" placeholder="Location & date (if known)"/>
+    <textarea placeholder="Tell me more about what you have in mind..."></textarea>
+    <button type="submit" class="form-btn">Send inquiry</button>
+  </form>
+</section>
+
+<footer>
+  <span>© 2026 Ms. Mello · Miami, Florida</span>
+  <a href="https://thebasic.host" target="_blank">thebasic.host</a>
+  <span>msmello.com</span>
+</footer>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.1});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+function sent(e){e.preventDefault();const b=e.target.querySelector('.form-btn');b.textContent='Message sent — thank you.';b.style.background='var(--stone)';b.disabled=true}
+
+// Menu carousel
+const tabs=document.querySelectorAll('.menu-tab');
+const track=document.querySelector('.menu-track');
+const panels=Array.from(document.querySelectorAll('.menu-panel'));
+tabs.forEach((tab,i)=>{
+  tab.addEventListener('click',()=>{
+    const target=tab.dataset.tab;
+    const idx=panels.findIndex(p=>p.dataset.panel===target);
+    if(idx<0)return;
+    tabs.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    track.style.transform=`translateX(-${idx*100}%)`;
+  });
+});
+</script>
+</body>
 </html>
