@@ -82,21 +82,19 @@ section{padding:104px 72px}
 .svc-desc{font-size:13.5px;line-height:1.85;color:var(--stone)}
 
 /* STRIP */
-/* GALLERY CAROUSEL */
-.gallery{position:relative;width:100%;height:620px;background:var(--ink);overflow:hidden}
-.gallery-viewport{width:100%;height:100%;overflow:hidden}
-.gallery-track{display:flex;height:100%;transition:transform .7s cubic-bezier(.4,0,.2,1);will-change:transform}
-.gallery-slide{flex:0 0 100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--ink)}
-.gallery-slide img{width:100%;height:100%;object-fit:cover;display:block}
-.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);color:var(--white);cursor:pointer;font-size:22px;font-family:'Cormorant',serif;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:all .25s;z-index:10}
-.gallery-arrow:hover{background:rgba(0,0,0,.6);border-color:var(--blush)}
-.gallery-prev{left:32px}
-.gallery-next{right:32px}
-.gallery-meta{position:absolute;top:24px;right:32px;color:var(--white);font-size:11px;letter-spacing:.24em;text-transform:uppercase;z-index:10;opacity:.85}
-.gallery-dots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:10}
-.gallery-dot{width:7px;height:7px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:transparent;cursor:pointer;padding:0;transition:all .25s}
-.gallery-dot.active{background:var(--blush);border-color:var(--blush);transform:scale(1.4)}
-.gallery-dot:hover{border-color:var(--blush)}
+/* GALLERY CAROUSEL — multi-photo strip */
+.gallery{position:relative;width:100%;padding:48px 0;background:var(--ink)}
+.gallery-viewport{width:100%;overflow:hidden}
+.gallery-track{display:flex;gap:4px;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform}
+.gallery-slide{flex:0 0 calc((100% - 12px) / 4);height:340px;background:var(--ink-soft);overflow:hidden;cursor:pointer}
+.gallery-slide img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.gallery-slide:hover img{transform:scale(1.04)}
+.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.4);color:var(--white);cursor:pointer;font-size:20px;font-family:'Cormorant',serif;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:all .25s;z-index:10}
+.gallery-arrow:hover:not(:disabled){background:rgba(0,0,0,.8);border-color:var(--blush)}
+.gallery-arrow:disabled{opacity:.25;cursor:not-allowed}
+.gallery-prev{left:18px}
+.gallery-next{right:18px}
+.gallery-meta{position:absolute;top:14px;right:24px;color:var(--white);font-size:10px;letter-spacing:.26em;text-transform:uppercase;z-index:10;opacity:.7;font-family:'DM Sans',sans-serif}
 
 /* THE BASIC */
 .basic-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:580px}
@@ -176,12 +174,12 @@ footer a:hover{color:var(--white)}
   .duo{height:280px}
   .svc-top{flex-direction:column;gap:24px;align-items:flex-start}
   .svc-grid{grid-template-columns:1fr}
-  .gallery{height:380px}
-  .gallery-arrow{width:42px;height:42px;font-size:18px}
-  .gallery-prev{left:16px}
-  .gallery-next{right:16px}
-  .gallery-meta{top:16px;right:16px;font-size:10px}
-  .gallery-dots{bottom:18px}
+  .gallery{padding:32px 0}
+  .gallery-slide{flex:0 0 calc((100% - 4px) / 2);height:240px}
+  .gallery-arrow{width:38px;height:38px;font-size:18px}
+  .gallery-prev{left:12px}
+  .gallery-next{right:12px}
+  .gallery-meta{top:10px;right:14px;font-size:9px}
   .basic-l{padding:64px 28px}.basic-r{padding:56px 28px}
   .contact-section{padding:72px 28px;gap:48px}
   footer{flex-direction:column;gap:10px;text-align:center;padding:28px}
@@ -278,9 +276,8 @@ footer a:hover{color:var(--white)}
   <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Previous photo">&#x2039;</button>
   <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Next photo">&#x203A;</button>
   <div class="gallery-meta">
-    <span class="gallery-count"><span id="galleryCurrent">1</span> &nbsp;/&nbsp; <span id="galleryTotal">19</span></span>
+    <span id="galleryRange">1–4</span> &nbsp;/&nbsp; <span id="galleryTotal">19</span>
   </div>
-  <div class="gallery-dots" id="galleryDots"></div>
 </section>
 
 <!-- THE BASIC -->
@@ -533,15 +530,16 @@ tabs.forEach((tab,i)=>{
   });
 });
 
-// Photo gallery carousel
+// Photo gallery carousel — multi-photo strip
 (function(){
   const TOTAL=19;
   const gTrack=document.getElementById('galleryTrack');
-  const gDots=document.getElementById('galleryDots');
-  const gCurrent=document.getElementById('galleryCurrent');
+  const gPrev=document.getElementById('galleryPrev');
+  const gNext=document.getElementById('galleryNext');
+  const gRange=document.getElementById('galleryRange');
   const gTotalEl=document.getElementById('galleryTotal');
   const gallerySection=document.querySelector('.gallery');
-  if(!gTrack||!gDots||!gallerySection)return;
+  if(!gTrack||!gallerySection)return;
   gTotalEl.textContent=TOTAL;
   let current=0;
   for(let i=1;i<=TOTAL;i++){
@@ -550,27 +548,33 @@ tabs.forEach((tab,i)=>{
     const img=document.createElement('img');
     img.src=`/images/gallery-${i}.jpg`;
     img.alt='';
-    img.loading=i<=2?'eager':'lazy';
+    img.loading=i<=4?'eager':'lazy';
     img.decoding='async';
     slide.appendChild(img);
     gTrack.appendChild(slide);
-    const dot=document.createElement('button');
-    dot.className='gallery-dot'+(i===1?' active':'');
-    dot.setAttribute('aria-label',`Go to photo ${i}`);
-    dot.dataset.idx=i-1;
-    gDots.appendChild(dot);
+  }
+  function perView(){return window.innerWidth<=720?(window.innerWidth<=420?1:2):4}
+  function maxIndex(){return Math.max(0,TOTAL-perView())}
+  function slideStep(){
+    const first=gTrack.children[0];
+    if(!first)return 0;
+    const gap=parseFloat(getComputedStyle(gTrack).gap)||0;
+    return first.getBoundingClientRect().width+gap;
+  }
+  function update(){
+    const step=slideStep();
+    gTrack.style.transform=`translateX(-${current*step}px)`;
+    const last=Math.min(TOTAL,current+perView());
+    gRange.textContent=`${current+1}–${last}`;
+    gPrev.disabled=current<=0;
+    gNext.disabled=current>=maxIndex();
   }
   function goTo(idx){
-    current=((idx%TOTAL)+TOTAL)%TOTAL;
-    gTrack.style.transform=`translateX(-${current*100}%)`;
-    gCurrent.textContent=current+1;
-    gDots.querySelectorAll('.gallery-dot').forEach((d,i)=>d.classList.toggle('active',i===current));
+    current=Math.max(0,Math.min(maxIndex(),idx));
+    update();
   }
-  document.getElementById('galleryPrev').addEventListener('click',()=>{goTo(current-1);resetAuto()});
-  document.getElementById('galleryNext').addEventListener('click',()=>{goTo(current+1);resetAuto()});
-  gDots.addEventListener('click',e=>{
-    if(e.target.classList.contains('gallery-dot')){goTo(+e.target.dataset.idx);resetAuto()}
-  });
+  gPrev.addEventListener('click',()=>{goTo(current-1);resetAuto()});
+  gNext.addEventListener('click',()=>{goTo(current+1);resetAuto()});
   // Keyboard nav when gallery in view
   document.addEventListener('keydown',e=>{
     const r=gallerySection.getBoundingClientRect();
@@ -585,11 +589,24 @@ tabs.forEach((tab,i)=>{
     const dx=e.changedTouches[0].clientX-touchStart;
     if(Math.abs(dx)>40){goTo(current+(dx<0?1:-1));resetAuto()}
   });
-  // Auto-advance with pause on hover
-  let auto=setInterval(()=>goTo(current+1),6000);
-  function resetAuto(){clearInterval(auto);auto=setInterval(()=>goTo(current+1),6000)}
+  // Auto-advance: loops back to start at the end
+  function tick(){
+    if(current>=maxIndex())goTo(0);
+    else goTo(current+1);
+  }
+  let auto=setInterval(tick,5000);
+  function resetAuto(){clearInterval(auto);auto=setInterval(tick,5000)}
   gallerySection.addEventListener('mouseenter',()=>clearInterval(auto));
-  gallerySection.addEventListener('mouseleave',()=>{auto=setInterval(()=>goTo(current+1),6000)});
+  gallerySection.addEventListener('mouseleave',()=>{auto=setInterval(tick,5000)});
+  // Recalculate on resize
+  let resizeTimer;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{current=Math.min(current,maxIndex());update()},150);
+  });
+  // Initial render after images settle
+  requestAnimationFrame(update);
+  window.addEventListener('load',update);
 })();
 </script>
 </body>
