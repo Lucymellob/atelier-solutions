@@ -23,8 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# don't commit huge raw photos — only food-N.jpg / portrait.jpg etc.
+# raw source PNGs are huge and not referenced by the site
 images/.DS_Store
-images/[0-9]*.jpg
 images/[0-9]*.png
 images/[0-9]*.jpeg
