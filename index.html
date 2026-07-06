@@ -153,12 +153,6 @@ section{padding:120px 72px}
 .basic-compact-img{aspect-ratio:4/5;overflow:hidden;background:var(--fog)}
 .basic-compact-img img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* FULL-BLEED MOMENT */
-.moment{position:relative;width:100%;height:75vh;min-height:520px;overflow:hidden;padding:0;background:var(--ink)}
-.moment.moment-fallback{background:linear-gradient(180deg,#191917 0%,#2b2724 100%)}
-.moment-img{width:100%;height:100%;object-fit:cover;display:block}
-.moment-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 40px 80px;background:linear-gradient(to bottom,rgba(0,0,0,0) 40%,rgba(0,0,0,0.55) 100%)}
-.moment-quote{font-family:'Cormorant',serif;font-size:clamp(24px,3vw,38px);font-weight:300;color:var(--white);line-height:1.4;text-align:center;letter-spacing:.01em;max-width:800px;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
 
 /* INQUIRE */
 .contact-section{background:var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:100px;padding:140px 72px}
@@ -198,8 +192,6 @@ footer a:hover{color:var(--white)}
   .phil-grid,.basic-wrap,.contact-section{grid-template-columns:1fr;gap:48px}
   .basic-compact{padding:56px 20px}
   .basic-compact-wrap{grid-template-columns:1fr;padding:40px 28px;gap:32px}
-  .moment{height:60vh;min-height:400px}
-  .moment-overlay{padding:0 24px 48px}
   .phil-photo{height:360px}
   .exp-grid,.how-list{grid-template-columns:1fr}
   .gallery-head{padding:72px 28px 32px}
@@ -487,13 +479,6 @@ footer a:hover{color:var(--white)}
   </div>
 </section>
 
-<!-- FULL-BLEED MOMENT -->
-<section class="moment">
-  <img src="images/25.jpg" alt="A private dinner in progress at candlelight" class="moment-img" onerror="this.style.display='none';this.parentElement.classList.add('moment-fallback')"/>
-  <div class="moment-overlay">
-    <p class="moment-quote"><em>This is what an evening feels like.</em></p>
-  </div>
-</section>
 
 <!-- INQUIRE -->
 <section id="contact" class="contact-section">
