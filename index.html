@@ -62,7 +62,8 @@ section{padding:120px 72px}
 .phil-photo{position:relative;height:640px;overflow:hidden}
 .phil-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .phil-text .s-title{margin-bottom:36px}
-.phil-text p{margin-bottom:22px;max-width:520px}
+.phil-text p.s-body{margin-bottom:20px;max-width:520px}
+.phil-text p.s-body:first-of-type{font-family:'Cormorant',serif;font-style:italic;font-size:22px;line-height:1.4;color:var(--ink);margin-bottom:28px;max-width:100%}
 .phil-signature{margin-top:36px;font-family:'Cormorant',serif;font-style:italic;font-size:24px;color:var(--ink);line-height:1.4}
 .phil-signature em{color:var(--blush-deep)}
 
@@ -82,7 +83,7 @@ section{padding:120px 72px}
 .how-section .s-eye{color:var(--blush)}
 .how-top{max-width:800px;margin-bottom:80px}
 .how-intro{font-size:15px;line-height:1.9;color:var(--stone);max-width:540px;margin-top:20px}
-.how-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1px 60px;row-gap:56px}
+.how-list{display:grid;grid-template-columns:repeat(4,1fr);gap:1px 48px;row-gap:56px}
 .how-item{padding-top:32px;border-top:1px solid rgba(255,255,255,.14);position:relative}
 .how-n{font-family:'Cormorant',serif;font-size:13px;font-style:italic;color:var(--blush);letter-spacing:.05em;position:absolute;top:14px;left:0}
 .how-h{font-family:'Cormorant',serif;font-size:24px;font-weight:300;color:var(--white);line-height:1.25;margin-bottom:12px;margin-top:10px}
@@ -90,14 +91,19 @@ section{padding:120px 72px}
 
 /* GALLERY */
 .gallery-section{padding:0;background:var(--paper)}
-.gallery-head{padding:120px 72px 72px}
-.gallery-head .s-title{max-width:800px}
-.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:280px;gap:4px}
-.g-item{overflow:hidden;background:var(--linen)}
-.g-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease}
-.g-item:hover img{transform:scale(1.04)}
-.g-tall{grid-row:span 2}
-.g-wide{grid-column:span 2}
+.gallery-head{padding:120px 72px 56px}
+.gallery-head-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.gallery-head .s-title{max-width:640px;margin-bottom:0}
+.gallery-nav{display:flex;gap:12px}
+.g-arrow{width:52px;height:52px;border-radius:50%;border:1px solid var(--fog);background:transparent;color:var(--ink);font-size:16px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center}
+.g-arrow:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.g-arrow:disabled{opacity:.3;cursor:not-allowed}
+.g-arrow:disabled:hover{background:transparent;color:var(--ink);border-color:var(--fog)}
+.gallery-viewport{overflow:hidden;padding:0 72px 120px}
+.gallery-track{display:flex;gap:16px;transition:transform .6s cubic-bezier(.65,.05,.36,1);will-change:transform}
+.g-slide{flex:0 0 calc((100% - 48px) / 4);aspect-ratio:3/4;overflow:hidden;background:var(--linen)}
+.g-slide img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease}
+.g-slide:hover img{transform:scale(1.04)}
 
 /* THE BASIC */
 .basic-section{padding:0}
@@ -126,6 +132,7 @@ section{padding:120px 72px}
 .m-course{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone-lt);padding-top:8px}
 .m-dish{font-family:'Cormorant',serif;font-size:30px;font-weight:300;color:var(--ink);margin-bottom:10px;line-height:1.15}
 .m-desc{font-size:13.5px;color:var(--stone);letter-spacing:.02em;line-height:1.6}
+.pricing-note{margin-top:56px;padding-top:32px;border-top:1px solid var(--fog);font-size:13px;color:var(--stone);letter-spacing:.03em;font-style:italic;text-align:center;font-family:'Cormorant',serif;font-size:17px;line-height:1.6}
 
 /* MISSION */
 .mission-section{background:var(--linen);padding:140px 72px}
@@ -134,6 +141,24 @@ section{padding:120px 72px}
 .mission-title{font-family:'Cormorant',serif;font-size:clamp(42px,6vw,80px);font-weight:300;line-height:1.05;color:var(--ink);margin-bottom:48px}
 .mission-title em{font-style:italic}
 .mission-body{font-size:16px;line-height:1.9;color:var(--ink-soft);max-width:640px;margin:0 auto}
+
+/* THE BASIC (compact) */
+.basic-compact{padding:80px 72px;background:var(--linen)}
+.basic-compact-wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:center;background:var(--paper);padding:56px 56px;border:1px solid var(--fog)}
+.basic-compact-text{display:flex;flex-direction:column;justify-content:center}
+.basic-compact-title{font-family:'Cormorant',serif;font-size:36px;font-weight:300;line-height:1.05;color:var(--ink);margin-bottom:16px;letter-spacing:-.01em}
+.basic-compact-body{font-size:14.5px;line-height:1.75;color:var(--ink-soft);margin-bottom:24px;max-width:520px}
+.basic-compact-link{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--blush-deep);text-decoration:none;border-bottom:1px solid var(--blush);padding-bottom:4px;align-self:flex-start;transition:all .22s}
+.basic-compact-link:hover{color:var(--ink);border-color:var(--ink)}
+.basic-compact-img{aspect-ratio:4/5;overflow:hidden;background:var(--fog)}
+.basic-compact-img img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* FULL-BLEED MOMENT */
+.moment{position:relative;width:100%;height:75vh;min-height:520px;overflow:hidden;padding:0;background:var(--ink)}
+.moment.moment-fallback{background:linear-gradient(180deg,#191917 0%,#2b2724 100%)}
+.moment-img{width:100%;height:100%;object-fit:cover;display:block}
+.moment-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 40px 80px;background:linear-gradient(to bottom,rgba(0,0,0,0) 40%,rgba(0,0,0,0.55) 100%)}
+.moment-quote{font-family:'Cormorant',serif;font-size:clamp(24px,3vw,38px);font-weight:300;color:var(--white);line-height:1.4;text-align:center;letter-spacing:.01em;max-width:800px;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
 
 /* INQUIRE */
 .contact-section{background:var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:100px;padding:140px 72px}
@@ -171,11 +196,17 @@ footer a:hover{color:var(--white)}
   hr.rule{margin:0 28px}
   .creds-inner{padding:20px 28px;flex-direction:column;gap:12px;align-items:flex-start}
   .phil-grid,.basic-wrap,.contact-section{grid-template-columns:1fr;gap:48px}
+  .basic-compact{padding:56px 20px}
+  .basic-compact-wrap{grid-template-columns:1fr;padding:40px 28px;gap:32px}
+  .moment{height:60vh;min-height:400px}
+  .moment-overlay{padding:0 24px 48px}
   .phil-photo{height:360px}
   .exp-grid,.how-list{grid-template-columns:1fr}
-  .gallery-head{padding:72px 28px 40px}
-  .gallery-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:220px}
-  .g-tall,.g-wide{grid-row:span 1;grid-column:span 1}
+  .gallery-head{padding:72px 28px 32px}
+  .gallery-head-inner{flex-direction:column;align-items:flex-start;gap:24px}
+  .gallery-viewport{padding:0 28px 72px}
+  .g-slide{flex:0 0 calc((100% - 16px) / 2);aspect-ratio:3/4}
+  .g-arrow{width:44px;height:44px}
   .basic-l{padding:64px 28px}
   .basic-r img{min-height:400px}
   .menus-section{padding:72px 28px}
@@ -192,11 +223,12 @@ footer a:hover{color:var(--white)}
 <nav>
   <a href="#top" class="logo">Chef Lucy Mello</a>
   <ul class="nav-links">
+    <li><a href="#gallery">Portfolio</a></li>
+    <li><a href="#about">About</a></li>
     <li><a href="#philosophy">Philosophy</a></li>
     <li><a href="#experiences">Experiences</a></li>
     <li><a href="#how">How It Works</a></li>
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#basic">The Basic</a></li>
+    <li><a href="#basic">The Basic Host</a></li>
   </ul>
   <a href="#contact" class="nav-cta">Inquire</a>
 </nav>
@@ -204,13 +236,13 @@ footer a:hover{color:var(--white)}
 <!-- HERO -->
 <div class="hero" id="top">
   <div class="hero-text">
-    <p class="eyebrow">Brazilian Hospitality &nbsp;·&nbsp; French Technique &nbsp;·&nbsp; Miami</p>
-    <h1 class="hero-hed">For the<br>nights that<br><em>matter.</em></h1>
+    <p class="eyebrow">Brazilian Soul &nbsp;·&nbsp; French Technique &nbsp;·&nbsp; Miami</p>
+    <h1 class="hero-hed">The kind of<br>night you'll<br><em>never forget.</em></h1>
     <div class="hero-bar"></div>
-    <p class="hero-sub">Private dining experiences designed around your guests, your home, and the moments worth celebrating.</p>
+    <p class="hero-sub">Private dining experiences your guests will still be talking about weeks later. In your home. On your schedule. With every detail handled.</p>
     <div class="hero-actions">
-      <a href="#contact" class="btn-dark">Book an experience</a>
-      <a href="#philosophy" class="btn-quiet">Meet the chef</a>
+      <a href="#contact" class="btn-dark">Reserve an evening</a>
+      <a href="#about" class="btn-quiet">Meet the chef</a>
     </div>
   </div>
   <div class="hero-img">
@@ -222,26 +254,71 @@ footer a:hover{color:var(--white)}
 <div class="creds">
   <div class="creds-inner">
     <div class="cred"><span>◆</span>Private Chef</div>
-    <div class="cred"><span>◆</span>Brazilian Cuisine</div>
-    <div class="cred"><span>◆</span>Fine Dining Technique</div>
-    <div class="cred"><span>◆</span>Custom Menus</div>
-    <div class="cred"><span>◆</span>Dinner Clubs</div>
-    <div class="cred"><span>◆</span>Founder, The Basic</div>
+    <div class="cred"><span>◆</span>Intimate Dinners</div>
+    <div class="cred"><span>◆</span>Brand Events</div>
+    <div class="cred"><span>◆</span>Multi-Course Tastings</div>
+    <div class="cred"><span>◆</span>Founder, The Basic Host</div>
   </div>
 </div>
 
-<!-- PHILOSOPHY -->
-<section id="philosophy">
+<!-- GALLERY -->
+<section id="gallery" class="gallery-section">
+  <div class="gallery-head fade">
+    <div class="gallery-head-inner">
+      <div>
+        <span class="s-eye">Portfolio</span>
+        <h2 class="s-title">Some of the<br><em>evenings so far.</em></h2>
+      </div>
+      <div class="gallery-nav">
+        <button class="g-arrow" id="gPrev" aria-label="Previous">←</button>
+        <button class="g-arrow" id="gNext" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="gallery-viewport fade">
+    <div class="gallery-track" id="gTrack">
+      <div class="g-slide"><img src="images/6.jpg" alt="Duck breast with grilled peaches"/></div>
+      <div class="g-slide"><img src="images/9.jpg" alt="The Basic Table place setting"/></div>
+      <div class="g-slide"><img src="images/4.jpg" alt="Tuna crudo with leche de tigre"/></div>
+      <div class="g-slide"><img src="images/10.jpg" alt="Watermelon salad with cotija"/></div>
+      <div class="g-slide"><img src="images/16.jpg" alt="Grilled octopus with chimichurri"/></div>
+      <div class="g-slide"><img src="images/14.jpg" alt="Salmon with peach burrata"/></div>
+      <div class="g-slide"><img src="images/20.jpg" alt="Seared scallops"/></div>
+      <div class="g-slide"><img src="images/15.jpg" alt="Pavlova with berries"/></div>
+      <div class="g-slide"><img src="images/17.jpg" alt="Shrimp risotto"/></div>
+      <div class="g-slide"><img src="images/19.jpg" alt="Steak with charred leeks"/></div>
+      <div class="g-slide"><img src="images/8.jpg" alt="Salmon with caramelized endive"/></div>
+      <div class="g-slide"><img src="images/13.jpg" alt="Chocolate dessert with cream"/></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
   <div class="phil-grid fade">
     <div class="phil-photo">
-      <img src="images/food-1.jpg" alt="Chef Lucy Mello plating"/>
+      <img src="images/24.jpg" alt="Chef Lucy Mello plating"/>
     </div>
     <div class="phil-text">
+      <span class="s-eye">About</span>
+      <h2 class="s-title">A Brazilian at heart.<br>Not <em>so basic,</em> is it?</h2>
+      <p class="s-body">Born and raised in Brazil, I fell in love with cooking the same way I fell in love with hosting. Through the people, the memories, and the moments made around a table. I trained in professional kitchens and became obsessed with mastering the fundamentals. Knife work. Technique. Timing. Balance. Once I understood the basics, I found the freedom to create something entirely my own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" style="background:var(--linen)">
+  <div class="phil-grid fade">
+    <div class="phil-text">
       <span class="s-eye">Philosophy</span>
-      <h2 class="s-title">Beyond a <em>menu.</em></h2>
-      <p class="s-body">The other half is making people feel cared for. That's the part no one talks about — and the part I care about most.</p>
-      <p class="s-body">I've always believed the best meals aren't served in restaurants — they're shared around the people you love. My job isn't simply to cook. It's to create evenings your guests will still be talking about long after the last plate is cleared.</p>
-      <p class="phil-signature">My foundation is <em>French technique.</em><br>My soul is <em>Brazilian.</em><br>The rest is built around you.</p>
+      <h2 class="s-title">Every dish<br>tells a <em>story.</em></h2>
+      <p class="s-body">Some carry the memory of my grandmother's kitchen. Others draw from a market in a city I visited last spring, or a technique I fell in love with while staging in Michelin-starred kitchens. My Brazilian soul lives in everything I create. Not always in the ingredients, but in the warmth, the intention, and the way I want people to feel at my table.</p>
+      <p class="s-body">Brazilian cuisine has long been underrepresented in the fine dining world. My mission is to change that. One plate at a time.</p>
+      <p class="phil-signature">My foundation is <em>classical French technique.</em><br>My soul is <em>Brazilian.</em><br>My purpose is <em>bringing people together.</em></p>
+    </div>
+    <div class="phil-photo">
+      <img src="images/16.jpg" alt="Grilled octopus with chimichurri"/>
     </div>
   </div>
 </section>
@@ -301,78 +378,30 @@ footer a:hover{color:var(--white)}
 <!-- HOW IT WORKS -->
 <section id="how" class="how-section">
   <div class="how-top fade">
-    <span class="s-eye">How It Works</span>
-    <h2 class="s-title">Six steps.<br>One <em>unforgettable</em> night.</h2>
-    <p class="how-intro">From the first message to the last dish cleared, everything is handled. Your only job is to enjoy your guests.</p>
+    <span class="s-eye">The Process</span>
+    <h2 class="s-title">Four steps to an<br>evening they'll <em>never forget.</em></h2>
+    <p class="how-intro">From the first message to the last dish cleared, every detail is handled. Your only job is to enjoy your guests.</p>
   </div>
   <div class="how-list fade">
     <div class="how-item">
       <div class="how-n">01.</div>
-      <div class="how-h">Tell me your occasion.</div>
-      <p class="how-b">A birthday, a proposal, a Tuesday that deserves better. Every detail begins with a conversation.</p>
+      <div class="how-h">Consultation</div>
+      <p class="how-b">A conversation about your occasion, your guests, and how you want the night to feel.</p>
     </div>
     <div class="how-item">
       <div class="how-n">02.</div>
-      <div class="how-h">I'll design your menu.</div>
-      <p class="how-b">A custom menu built around your guests, dietary needs, and the mood of the evening.</p>
+      <div class="how-h">Menu Design</div>
+      <p class="how-b">A bespoke tasting menu built around your table, your palate, and any dietary needs.</p>
     </div>
     <div class="how-item">
       <div class="how-n">03.</div>
-      <div class="how-h">I shop.</div>
-      <p class="how-b">Sourced from the best local markets and specialty purveyors — nothing on your list.</p>
+      <div class="how-h">Sourcing & Preparation</div>
+      <p class="how-b">High quality sourcing and preparation completed in advance, before service begins.</p>
     </div>
     <div class="how-item">
       <div class="how-n">04.</div>
-      <div class="how-h">I cook.</div>
-      <p class="how-b">Everything is prepared, plated, and served in your kitchen with fine dining precision.</p>
-    </div>
-    <div class="how-item">
-      <div class="how-n">05.</div>
-      <div class="how-h">You stay present.</div>
-      <p class="how-b">You're at the table with your people — where you were always supposed to be.</p>
-    </div>
-    <div class="how-item">
-      <div class="how-n">06.</div>
-      <div class="how-h">I leave your kitchen spotless.</div>
-      <p class="how-b">You go to bed with a clean counter and a full memory of the night.</p>
-    </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="gallery" class="gallery-section">
-  <div class="gallery-head fade">
-    <span class="s-eye">Gallery</span>
-    <h2 class="s-title">The <em>work</em> speaks<br>for itself.</h2>
-  </div>
-  <div class="gallery-grid fade">
-    <div class="g-item g-tall"><img src="images/6.jpg" alt="Duck breast with grilled peaches"/></div>
-    <div class="g-item"><img src="images/4.jpg" alt="Tuna crudo with leche de tigre"/></div>
-    <div class="g-item"><img src="images/10.jpg" alt="Watermelon salad with cotija"/></div>
-    <div class="g-item g-tall"><img src="images/16.jpg" alt="Grilled octopus with chimichurri"/></div>
-    <div class="g-item"><img src="images/14.jpg" alt="Salmon with peach burrata"/></div>
-    <div class="g-item"><img src="images/20.jpg" alt="Seared scallops with lemon"/></div>
-    <div class="g-item"><img src="images/15.jpg" alt="Pavlova with berries"/></div>
-    <div class="g-item"><img src="images/17.jpg" alt="Shrimp risotto"/></div>
-    <div class="g-item"><img src="images/19.jpg" alt="Steak with charred leeks"/></div>
-    <div class="g-item g-wide"><img src="images/8.jpg" alt="Salmon with caramelized endive"/></div>
-    <div class="g-item"><img src="images/13.jpg" alt="Chocolate dessert with cream"/></div>
-  </div>
-</section>
-
-<!-- THE BASIC -->
-<section id="basic" class="basic-section">
-  <div class="basic-wrap">
-    <div class="basic-l fade">
-      <span class="s-eye">Beyond My Table &nbsp;·&nbsp; thebasic.host</span>
-      <h2 class="s-title">Beyond<br><em>my table.</em></h2>
-      <p class="s-body">One dinner inspired something bigger.</p>
-      <br/>
-      <p class="s-body">The Basic helps anyone host with the same intentionality I bring to every private dinner. A curated menu builder, hosting guides, and dinner club moments — designed so that whether you're cooking yourself or hiring a chef, hosting feels effortless.</p>
-      <a href="https://thebasic.host" target="_blank" class="basic-cta">Visit The Basic</a>
-    </div>
-    <div class="basic-r fade">
-      <img src="images/9.jpg" alt="The Basic Table place setting"/>
+      <div class="how-h">Service & Close-Down</div>
+      <p class="how-b">Final cooking finished in your home. Each course plated with precision. Kitchen fully cleaned before I leave.</p>
     </div>
   </div>
 </section>
@@ -380,52 +409,52 @@ footer a:hover{color:var(--white)}
 <!-- MENUS -->
 <section id="menus" class="menus-section">
   <div class="menu-head fade">
-    <span class="s-eye">Sample Menus</span>
-    <h2 class="s-title">A taste of what's<br><em>possible.</em></h2>
-    <p class="s-body" style="max-width:520px;margin-top:16px">Every menu is custom-built around your occasion, your guests, and the story of the evening. These are starting points — your dinner is its own.</p>
+    <span class="s-eye">Sample Collections</span>
+    <h2 class="s-title">A glimpse of<br>what's <em>possible.</em></h2>
+    <p class="s-body" style="max-width:520px;margin-top:16px">Every menu is composed for your evening. These are starting points to spark the conversation. Yours will be entirely its own.</p>
   </div>
   <div class="menu-tabs-wrap fade">
     <div class="menu-tabs" role="tablist">
-      <button class="menu-tab active" data-tab="brazilian" role="tab">Brazilian</button>
-      <button class="menu-tab" data-tab="french" role="tab">French</button>
-      <button class="menu-tab" data-tab="italian" role="tab">Italian</button>
+      <button class="menu-tab active" data-tab="coastal" role="tab">Coastal Brazilian</button>
+      <button class="menu-tab" data-tab="classics" role="tab">The Classics</button>
+      <button class="menu-tab" data-tab="fireandsmoke" role="tab">Fire & Smoke</button>
       <button class="menu-tab" data-tab="mediterranean" role="tab">Mediterranean</button>
-      <button class="menu-tab" data-tab="fusion" role="tab">Brazilian Fusion</button>
+      <button class="menu-tab" data-tab="fusion" role="tab">Chef's Journey</button>
       <button class="menu-tab" data-tab="wildcard" role="tab">Wild Card</button>
     </div>
     <div class="menu-panels">
       <div class="menu-track">
-        <!-- Brazilian -->
-        <div class="menu-panel" data-panel="brazilian">
-          <div class="menu-row"><span class="m-course">Entrada</span><div><div class="m-dish">Coxinha de Camarão</div><div class="m-desc">Tiger Prawns · Cassava Crust · Malagueta Aioli</div></div></div>
-          <div class="menu-row"><span class="m-course">Segundo</span><div><div class="m-dish">Salada de Palmito</div><div class="m-desc">Hearts of Palm · Mango · Toasted Coconut · Lime Vinaigrette</div></div></div>
-          <div class="menu-row"><span class="m-course">Prato Principal</span><div><div class="m-dish">Peixe da Costa</div><div class="m-desc">Whole Fish · Dendê Farofa · Herb Chimichurri · Turmeric Oil</div></div></div>
-          <div class="menu-row"><span class="m-course">Sobremesa</span><div><div class="m-dish">Brigadeiro Glacé</div><div class="m-desc">Dark Chocolate · Condensed Milk · Sea Salt · Gold Leaf</div></div></div>
+        <!-- Coastal Brazilian -->
+        <div class="menu-panel" data-panel="coastal">
+          <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Coxinha de Camarão</div><div class="m-desc">Tiger Prawns · Cassava Crust · Malagueta Aioli</div></div></div>
+          <div class="menu-row"><span class="m-course">Second</span><div><div class="m-dish">Salada de Palmito</div><div class="m-desc">Hearts of Palm · Mango · Toasted Coconut · Lime Vinaigrette</div></div></div>
+          <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Peixe da Costa</div><div class="m-desc">Whole Fish · Dendê Farofa · Herb Chimichurri · Turmeric Oil</div></div></div>
+          <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Brigadeiro Glacé</div><div class="m-desc">Dark Chocolate · Condensed Milk · Sea Salt · Gold Leaf</div></div></div>
         </div>
-        <!-- French -->
-        <div class="menu-panel" data-panel="french">
-          <div class="menu-row"><span class="m-course">Entrée</span><div><div class="m-dish">Tartare de Boeuf</div><div class="m-desc">Hand-Cut Wagyu · Cornichons · Quail Yolk · Toasted Brioche</div></div></div>
-          <div class="menu-row"><span class="m-course">Poisson</span><div><div class="m-dish">Saint-Jacques au Beurre Blanc</div><div class="m-desc">Seared Scallops · Beurre Blanc · Caviar · Microgreens</div></div></div>
-          <div class="menu-row"><span class="m-course">Plat Principal</span><div><div class="m-dish">Canard à l'Orange</div><div class="m-desc">Duck Breast · Bitter Orange · Pomme Purée · Wilted Greens</div></div></div>
-          <div class="menu-row"><span class="m-course">Dessert</span><div><div class="m-dish">Tarte au Citron</div><div class="m-desc">Meyer Lemon Tart · Italian Meringue · Wild Honey</div></div></div>
+        <!-- The Classics (French) -->
+        <div class="menu-panel" data-panel="classics">
+          <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Tartare de Boeuf</div><div class="m-desc">Hand-Cut Wagyu · Cornichons · Quail Yolk · Toasted Brioche</div></div></div>
+          <div class="menu-row"><span class="m-course">Second</span><div><div class="m-dish">Saint-Jacques au Beurre Blanc</div><div class="m-desc">Seared Scallops · Beurre Blanc · Caviar · Microgreens</div></div></div>
+          <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Canard à l'Orange</div><div class="m-desc">Duck Breast · Bitter Orange · Pomme Purée · Wilted Greens</div></div></div>
+          <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Tarte au Citron</div><div class="m-desc">Meyer Lemon Tart · Italian Meringue · Wild Honey</div></div></div>
         </div>
-        <!-- Italian -->
-        <div class="menu-panel" data-panel="italian">
-          <div class="menu-row"><span class="m-course">Antipasto</span><div><div class="m-dish">Burrata di Puglia</div><div class="m-desc">Stone Fruit · Aged Balsamic · Basil Oil · Sea Salt</div></div></div>
-          <div class="menu-row"><span class="m-course">Primo</span><div><div class="m-dish">Tagliatelle al Tartufo</div><div class="m-desc">Fresh Tagliatelle · Black Truffle · Parmigiano · Brown Butter</div></div></div>
-          <div class="menu-row"><span class="m-course">Secondo</span><div><div class="m-dish">Branzino al Forno</div><div class="m-desc">Whole Roasted Branzino · Lemon · Capers · Castelvetrano Olives</div></div></div>
-          <div class="menu-row"><span class="m-course">Dolce</span><div><div class="m-dish">Tiramisù Classico</div><div class="m-desc">Mascarpone · Espresso · Marsala · Cocoa</div></div></div>
+        <!-- Fire and Smoke -->
+        <div class="menu-panel" data-panel="fireandsmoke">
+          <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Charred Octopus</div><div class="m-desc">Live-Fire Octopus · Romesco · Preserved Lemon · Smoked Paprika</div></div></div>
+          <div class="menu-row"><span class="m-course">Second</span><div><div class="m-dish">Smoked Beet Tartare</div><div class="m-desc">Ember-Roasted Beets · Horseradish Crème · Rye · Chives</div></div></div>
+          <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Picanha au Poivre</div><div class="m-desc">Wood-Fired Picanha · Cognac Pepper Sauce · Bone Marrow Farofa</div></div></div>
+          <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Grilled Stone Fruit</div><div class="m-desc">Charred Peaches · Vanilla Mascarpone · Toasted Almond · Honey</div></div></div>
         </div>
         <!-- Mediterranean -->
         <div class="menu-panel" data-panel="mediterranean">
-          <div class="menu-row"><span class="m-course">Mezze</span><div><div class="m-dish">Whipped Feta & Roasted Beets</div><div class="m-desc">Smoked Honey · Pistachios · Mint · Warm Flatbread</div></div></div>
-          <div class="menu-row"><span class="m-course">Small Plate</span><div><div class="m-dish">Octopus à la Plancha</div><div class="m-desc">Charred Octopus · Romesco · Preserved Lemon · Smoked Paprika</div></div></div>
+          <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Whipped Feta & Roasted Beets</div><div class="m-desc">Smoked Honey · Pistachios · Mint · Warm Flatbread</div></div></div>
+          <div class="menu-row"><span class="m-course">Second</span><div><div class="m-dish">Burrata di Puglia</div><div class="m-desc">Stone Fruit · Aged Balsamic · Basil Oil · Sea Salt</div></div></div>
           <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Lamb Tagine</div><div class="m-desc">Slow-Braised Lamb · Apricot · Saffron Couscous · Harissa Yogurt</div></div></div>
-          <div class="menu-row"><span class="m-course">Sweet</span><div><div class="m-dish">Olive Oil Cake</div><div class="m-desc">Citrus Olive Oil · Crème Fraîche · Candied Orange</div></div></div>
+          <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Olive Oil Cake</div><div class="m-desc">Citrus Olive Oil · Crème Fraîche · Candied Orange</div></div></div>
         </div>
-        <!-- Brazilian Fusion -->
+        <!-- Chef's Journey (Brazilian Fusion) -->
         <div class="menu-panel" data-panel="fusion">
-          <div class="menu-row"><span class="m-course">Opener</span><div><div class="m-dish">Pão de Queijo Soufflé</div><div class="m-desc">Cheese Cloud · Truffle Honey · Cracked Pepper</div></div></div>
+          <div class="menu-row"><span class="m-course">Welcome</span><div><div class="m-dish">Pão de Queijo Soufflé</div><div class="m-desc">Cheese Cloud · Truffle Honey · Cracked Pepper</div></div></div>
           <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Tuna Ceviche · Coconut Leite</div><div class="m-desc">Yellowfin Tuna · Coconut Milk · Yuzu · Crispy Cassava</div></div></div>
           <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Picanha au Poivre</div><div class="m-desc">Brazilian Picanha · Cognac Pepper Sauce · Bone Marrow Farofa</div></div></div>
           <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Açaí Pavlova</div><div class="m-desc">Amazonian Açaí · Vanilla Cream · Toasted Brazil Nuts</div></div></div>
@@ -433,30 +462,45 @@ footer a:hover{color:var(--white)}
         <!-- Wild Card -->
         <div class="menu-panel" data-panel="wildcard">
           <div class="menu-row"><span class="m-course">Welcome</span><div><div class="m-dish">Hamachi Crudo · Passionfruit</div><div class="m-desc">Hamachi · Passionfruit Tigre de Leche · Crispy Quinoa · Avocado</div></div></div>
-          <div class="menu-row"><span class="m-course">Surprise</span><div><div class="m-dish">Miso Black Cod · Caipirinha Reduction</div><div class="m-desc">Black Cod · White Miso · Cachaça · Lime · Bok Choy</div></div></div>
-          <div class="menu-row"><span class="m-course">Showstopper</span><div><div class="m-dish">Short Rib · Mole Negro · Plantain Purée</div><div class="m-desc">48-Hour Short Rib · Oaxacan Mole · Sweet Plantain · Pickled Onion</div></div></div>
-          <div class="menu-row"><span class="m-course">Last Bite</span><div><div class="m-dish">Brigadeiro Tiramisù</div><div class="m-desc">Brazilian Brigadeiro · Espresso · Mascarpone · Cocoa Dust</div></div></div>
+          <div class="menu-row"><span class="m-course">First</span><div><div class="m-dish">Miso Black Cod · Caipirinha Reduction</div><div class="m-desc">Black Cod · White Miso · Cachaça · Lime · Bok Choy</div></div></div>
+          <div class="menu-row"><span class="m-course">Main</span><div><div class="m-dish">Short Rib · Mole Negro</div><div class="m-desc">48-Hour Short Rib · Oaxacan Mole · Plantain Purée · Pickled Onion</div></div></div>
+          <div class="menu-row"><span class="m-course">Finish</span><div><div class="m-dish">Brigadeiro Tiramisù</div><div class="m-desc">Brazilian Brigadeiro · Espresso · Mascarpone · Cocoa Dust</div></div></div>
         </div>
       </div>
+    </div>
+    <p class="pricing-note fade">Experiences are custom quoted based on guest count, menu, and service style. Most private dining evenings begin around $250 per guest.</p>
+  </div>
+</section>
+
+<!-- THE BASIC (compact) -->
+<section id="basic" class="basic-compact">
+  <div class="basic-compact-wrap fade">
+    <div class="basic-compact-text">
+      <span class="s-eye">Also Founded</span>
+      <h3 class="basic-compact-title">The Basic Host.</h3>
+      <p class="basic-compact-body">A digital hosting platform helping home hosts create memorable evenings with the same intention I bring to every private dinner. Smart menu builder. Curated menus. Grocery lists. Hosting guides.</p>
+      <a href="https://thebasic.host" target="_blank" class="basic-compact-link">Visit thebasic.host →</a>
+    </div>
+    <div class="basic-compact-img">
+      <img src="images/23.jpg" alt="The Basic Table dinner setting with candlelight"/>
     </div>
   </div>
 </section>
 
-<!-- MISSION -->
-<section id="mission" class="mission-section">
-  <div class="mission-wrap fade">
-    <div class="mission-eye">The Mission</div>
-    <h2 class="mission-title">Brazilian roots.<br>French technique.<br><em>One plate at a time.</em></h2>
-    <p class="mission-body">Brazilian cuisine has been left out of the fine dining conversation for too long. I'm on a mission to change that — bringing the depth, complexity, and beauty of Brazilian food culture to a world that has barely begun to taste it.</p>
+<!-- FULL-BLEED MOMENT -->
+<section class="moment">
+  <img src="images/25.jpg" alt="A private dinner in progress at candlelight" class="moment-img" onerror="this.style.display='none';this.parentElement.classList.add('moment-fallback')"/>
+  <div class="moment-overlay">
+    <p class="moment-quote"><em>This is what an evening feels like.</em></p>
   </div>
 </section>
 
 <!-- INQUIRE -->
 <section id="contact" class="contact-section">
   <div class="c-left fade">
-    <span class="s-eye">Inquire</span>
-    <h2 class="s-title">Tell me what<br>you're <em style="color:var(--blush)">celebrating.</em></h2>
-    <p>I'll take care of the rest.</p>
+    <span class="s-eye">Reserve</span>
+    <h2 class="s-title">Every evening begins<br>with a <em style="color:var(--blush)">conversation.</em></h2>
+    <p>Tell me about your night. I'll take care of the rest.</p>
   </div>
   <form class="form fade" id="inquiryForm" action="https://formspree.io/f/mdarlvvn" method="POST" onsubmit="sendInquiry(event)">
     <div class="form-row">
@@ -535,6 +579,30 @@ tabs.forEach(tab=>{
     track.style.transform=`translateX(-${idx*100}%)`;
   });
 });
+
+// Gallery carousel
+const gTrack=document.getElementById('gTrack');
+const gSlides=document.querySelectorAll('.g-slide');
+const gPrev=document.getElementById('gPrev');
+const gNext=document.getElementById('gNext');
+let gIndex=0;
+function getVisibleCount(){return window.innerWidth<=900?2:4}
+function gUpdate(){
+  const visible=getVisibleCount();
+  const maxIndex=Math.max(0,gSlides.length-visible);
+  if(gIndex>maxIndex)gIndex=maxIndex;
+  if(gIndex<0)gIndex=0;
+  const slideWidth=gSlides[0].getBoundingClientRect().width;
+  const gap=16;
+  gTrack.style.transform=`translateX(-${gIndex*(slideWidth+gap)}px)`;
+  gPrev.disabled=gIndex===0;
+  gNext.disabled=gIndex>=maxIndex;
+}
+gPrev.addEventListener('click',()=>{gIndex-=getVisibleCount();gUpdate()});
+gNext.addEventListener('click',()=>{gIndex+=getVisibleCount();gUpdate()});
+window.addEventListener('resize',gUpdate);
+window.addEventListener('load',gUpdate);
+gUpdate();
 </script>
 </body>
 </html>
