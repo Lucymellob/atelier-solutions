@@ -153,6 +153,12 @@ section{padding:120px 72px}
 .basic-compact-img{aspect-ratio:4/5;overflow:hidden;background:var(--fog)}
 .basic-compact-img img{width:100%;height:100%;object-fit:cover;display:block}
 
+/* FULL-BLEED MOMENT */
+.moment{position:relative;width:100%;height:75vh;min-height:520px;overflow:hidden;padding:0;background:var(--ink)}
+.moment.moment-fallback{background:linear-gradient(180deg,#191917 0%,#2b2724 100%)}
+.moment-img{width:100%;height:100%;object-fit:cover;display:block}
+.moment-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 40px 80px;background:linear-gradient(to bottom,rgba(0,0,0,0) 40%,rgba(0,0,0,0.55) 100%)}
+.moment-quote{font-family:'Cormorant',serif;font-size:clamp(24px,3vw,38px);font-weight:300;color:var(--white);line-height:1.4;text-align:center;letter-spacing:.01em;max-width:800px;text-shadow:0 2px 20px rgba(0,0,0,0.4)}
 
 /* INQUIRE */
 .contact-section{background:var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:100px;padding:140px 72px}
@@ -193,6 +199,8 @@ footer a:hover{color:var(--white)}
   .basic-compact{padding:56px 20px}
   .basic-compact-wrap{grid-template-columns:1fr;padding:40px 28px;gap:32px}
   .phil-photo{height:360px}
+  .moment{height:60vh;min-height:400px}
+  .moment-overlay{padding:0 24px 48px}
   .exp-grid,.how-list{grid-template-columns:1fr}
   .gallery-head{padding:72px 28px 32px}
   .gallery-head-inner{flex-direction:column;align-items:flex-start;gap:24px}
@@ -269,18 +277,18 @@ footer a:hover{color:var(--white)}
   </div>
   <div class="gallery-viewport fade">
     <div class="gallery-track" id="gTrack">
-      <div class="g-slide"><img src="images/6.jpg" alt="Duck breast with grilled peaches"/></div>
-      <div class="g-slide"><img src="images/9.jpg" alt="The Basic Table place setting"/></div>
-      <div class="g-slide"><img src="images/4.jpg" alt="Tuna crudo with leche de tigre"/></div>
-      <div class="g-slide"><img src="images/10.jpg" alt="Watermelon salad with cotija"/></div>
+      <div class="g-slide"><img src="images/6.jpg" alt="Duck breast with grilled peaches and edible flowers"/></div>
       <div class="g-slide"><img src="images/16.jpg" alt="Grilled octopus with chimichurri"/></div>
+      <div class="g-slide"><img src="images/4.jpg" alt="Tuna crudo with leche de tigre"/></div>
       <div class="g-slide"><img src="images/14.jpg" alt="Salmon with peach burrata"/></div>
-      <div class="g-slide"><img src="images/20.jpg" alt="Seared scallops"/></div>
-      <div class="g-slide"><img src="images/15.jpg" alt="Pavlova with berries"/></div>
-      <div class="g-slide"><img src="images/17.jpg" alt="Shrimp risotto"/></div>
-      <div class="g-slide"><img src="images/19.jpg" alt="Steak with charred leeks"/></div>
+      <div class="g-slide"><img src="images/13.jpg" alt="Chocolate dessert with whipped cream"/></div>
+      <div class="g-slide"><img src="images/17.jpg" alt="Shrimp risotto in red dish"/></div>
       <div class="g-slide"><img src="images/8.jpg" alt="Salmon with caramelized endive"/></div>
-      <div class="g-slide"><img src="images/13.jpg" alt="Chocolate dessert with cream"/></div>
+      <div class="g-slide"><img src="images/15.jpg" alt="Pavlova with strawberries and blueberries"/></div>
+      <div class="g-slide"><img src="images/19.jpg" alt="Steak with charred leeks"/></div>
+      <div class="g-slide"><img src="images/3.jpg" alt="Caprese with tomato, burrata, basil"/></div>
+      <div class="g-slide"><img src="images/10.jpg" alt="Watermelon cubes with cotija"/></div>
+      <div class="g-slide"><img src="images/25.jpg" alt="Candlelit dinner service"/></div>
     </div>
   </div>
 </section>
@@ -310,7 +318,7 @@ footer a:hover{color:var(--white)}
       <p class="phil-signature">My foundation is <em>classical French technique.</em><br>My soul is <em>Brazilian.</em><br>My purpose is <em>bringing people together.</em></p>
     </div>
     <div class="phil-photo">
-      <img src="images/25.jpg" alt="A private dinner in progress at candlelight"/>
+      <img src="images/16.jpg" alt="Grilled octopus with chimichurri"/>
     </div>
   </div>
 </section>
@@ -479,6 +487,13 @@ footer a:hover{color:var(--white)}
   </div>
 </section>
 
+<!-- FULL-BLEED MOMENT -->
+<section class="moment">
+  <img src="images/26.jpeg" alt="Guests gathered around a candlelit private dinner" class="moment-img" onerror="this.style.display='none';this.parentElement.classList.add('moment-fallback')"/>
+  <div class="moment-overlay">
+    <p class="moment-quote"><em>This is what an evening feels like.</em></p>
+  </div>
+</section>
 
 <!-- INQUIRE -->
 <section id="contact" class="contact-section">
