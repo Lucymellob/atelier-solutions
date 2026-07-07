@@ -26,4 +26,3 @@ dist-ssr
 # raw source PNGs are huge and not referenced by the site
 images/.DS_Store
 images/[0-9]*.png
-images/[0-9]*.jpeg
