@@ -171,7 +171,15 @@ section{padding:120px 72px}
 .form input::placeholder,.form textarea::placeholder{color:var(--stone)}
 .form input:focus,.form textarea:focus,.form select:focus{border-color:var(--blush-deep)}
 .form select option{background:var(--ink)}
+.form select:invalid{color:var(--stone)}
 .form textarea{resize:vertical;min-height:120px}
+.form input[type="date"]{color-scheme:dark;font-family:'DM Sans',sans-serif}
+.form input[type="date"]:invalid,.form input[type="date"]:not(:focus):placeholder-shown{color:var(--stone)}
+.form input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1) opacity(.55);cursor:pointer;padding-left:8px}
+.form input[type="date"]::-webkit-datetime-edit{color:inherit}
+.form input[type="date"]:valid::-webkit-datetime-edit{color:var(--white)}
+.form input[type="number"]{-moz-appearance:textfield}
+.form input[type="number"]::-webkit-inner-spin-button,.form input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .form-btn{padding:17px;background:var(--blush-deep);color:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .22s;margin-top:4px}
 .form-btn:hover{background:var(--blush)}
 
@@ -529,6 +537,7 @@ footer a:hover{color:var(--white)}
       <input type="text" name="name" placeholder="Your name" required/>
       <input type="email" name="email" placeholder="Email address" required/>
     </div>
+    <input type="tel" name="phone" placeholder="Phone number"/>
     <select name="experience_type">
       <option value="" disabled selected>Type of experience</option>
       <option>Private dinner</option>
@@ -540,7 +549,20 @@ footer a:hover{color:var(--white)}
       <option>Corporate experience</option>
       <option>Something else</option>
     </select>
-    <input type="text" name="location_date" placeholder="Location & date (if known)"/>
+    <div class="form-row">
+      <input type="text" name="location" placeholder="Where will this take place?"/>
+      <input type="date" name="date" placeholder="Date"/>
+    </div>
+    <input type="number" name="guest_count" placeholder="Guest count" min="1"/>
+    <input type="text" name="dietary" placeholder="Any allergies or dietary needs?"/>
+    <select name="referral_source">
+      <option value="" disabled selected>How did you hear about us?</option>
+      <option>Instagram</option>
+      <option>Referral</option>
+      <option>Google Search</option>
+      <option>The Basic Host</option>
+      <option>Other</option>
+    </select>
     <textarea name="message" placeholder="Tell me about the occasion..."></textarea>
     <input type="hidden" name="_subject" value="New inquiry — Ms. Mello"/>
     <button type="submit" class="form-btn">Send inquiry</button>
