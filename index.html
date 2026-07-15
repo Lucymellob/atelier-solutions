@@ -210,11 +210,30 @@ footer a:hover{color:var(--white)}
   .basic-l{padding:64px 28px}
   .basic-r img{min-height:400px}
   .menus-section{padding:72px 28px}
-  .menu-row{grid-template-columns:100px 1fr;gap:20px;padding:24px 0}
+  .menu-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin:0 -28px;padding:0 28px}
+  .menu-tabs::-webkit-scrollbar{display:none}
+  .menu-tab{padding:14px 16px 16px;font-size:10.5px}
+  .menu-tab:first-child{padding-left:0}
+  .menu-row{grid-template-columns:1fr;gap:8px;padding:24px 0}
+  .m-course{padding-top:0;margin-bottom:4px}
   .m-dish{font-size:22px}
   .mission-section{padding:80px 28px}
   .contact-section{padding:80px 28px}
+  .form-row{grid-template-columns:1fr}
+  .form input,.form textarea,.form select{font-size:16px;padding:14px 16px}
   footer{flex-direction:column;gap:10px;text-align:center;padding:28px}
+}
+@media(max-width:480px){
+  .hero-hed{font-size:44px;line-height:1}
+  .hero-sub{font-size:14px;margin-bottom:40px}
+  .hero-text{padding:48px 24px 40px}
+  section{padding:64px 24px}
+  .gallery-head{padding:64px 24px 24px}
+  .gallery-viewport{padding:0 24px 56px}
+  .exp-card{padding:40px 28px;min-height:180px}
+  .exp-num{margin-bottom:28px}
+  .cred{font-size:9.5px}
+  .creds-inner{gap:10px}
 }
 </style>
 </head>
